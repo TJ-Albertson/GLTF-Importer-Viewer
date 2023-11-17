@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{1ed05059-2bb6-41dc-8efc-76dbbe50e918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{7c2f03b0-a749-4629-acdb-59e74098ba90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\terrain">
+      <UniqueIdentifier>{e7007cd0-e321-4963-8d3b-86c0b09709da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\basic">
+      <UniqueIdentifier>{13c5f3b1-7317-4325-b7d7-5bbbd29af053}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\collision">
+      <UniqueIdentifier>{1bcb93de-adfb-4f2b-a27e-8201844bc00b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\import">
+      <UniqueIdentifier>{4c32c0e9-cb73-4bda-a798-83694a789c28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\animation">
+      <UniqueIdentifier>{8e71623a-b761-4864-bc67-7b5bd223ba75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\alpha">
+      <UniqueIdentifier>{5d35e340-515f-4cb7-b3cf-6ed45b170916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\pbr">
+      <UniqueIdentifier>{b4b82f0e-a437-4881-8ac8-943767ea3a3e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_tables.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_impl_glfw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="cJSON.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gltf_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\log_file_functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\dev_gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\scene_graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\shader_m.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\3Dutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\my_math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\shader_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\collision.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\aabb.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\gltf.h">
+      <Filter>Header Files\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bone_animation.h">
+      <Filter>Header Files\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\animation.h">
+      <Filter>Header Files\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\skeleton.h">
+      <Filter>Header Files\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\gltf\gltf_structures.h">
+      <Filter>Header Files\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\gltf\gltf_print.h">
+      <Filter>Header Files\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\gltf\gltf_gl.h">
+      <Filter>Header Files\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\gltf\gltf_process.h">
+      <Filter>Header Files\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\gltf\gltf_memory.h">
+      <Filter>Header Files\import</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\grid.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\grid.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\4.2.texture.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\4.2.texture.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\anim_model.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\anim_model.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\skybox.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\skybox.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\hitbox.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\6.multiple_lights.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\6.multiple_lights.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\billboard.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\billboard.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\animated_texture.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\animated_texture.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\terrain\8.3.gpuheight.vs">
+      <Filter>Resource Files\Shaders\terrain</Filter>
+    </None>
+    <None Include="..\shaders\terrain\8.3.gpuheight.fs">
+      <Filter>Resource Files\Shaders\terrain</Filter>
+    </None>
+    <None Include="..\shaders\terrain\8.3.gpuheight.tcs">
+      <Filter>Resource Files\Shaders\terrain</Filter>
+    </None>
+    <None Include="..\shaders\terrain\8.3.gpuheight.tes">
+      <Filter>Resource Files\Shaders\terrain</Filter>
+    </None>
+    <None Include="..\shaders\skybox2.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\hitbox.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="..\shaders\basic\basic.fs">
+      <Filter>Resource Files\Shaders\basic</Filter>
+    </None>
+    <None Include="..\shaders\basic\basic.vs">
+      <Filter>Resource Files\Shaders\basic</Filter>
+    </None>
+    <None Include="..\shaders\basic\basic_texture.vs">
+      <Filter>Resource Files\Shaders\basic</Filter>
+    </None>
+    <None Include="..\shaders\basic\basic_texture.fs">
+      <Filter>Resource Files\Shaders\basic</Filter>
+    </None>
+    <None Include="..\shaders\alpha\alpha.fs">
+      <Filter>Resource Files\Shaders\alpha</Filter>
+    </None>
+    <None Include="..\shaders\alpha\alpha.vs">
+      <Filter>Resource Files\Shaders\alpha</Filter>
+    </None>
+    <None Include="..\shaders\pbr\pbr.fs">
+      <Filter>Resource Files\Shaders\pbr</Filter>
+    </None>
+    <None Include="..\shaders\pbr\pbr.vs">
+      <Filter>Resource Files\Shaders\pbr</Filter>
+    </None>
+  </ItemGroup>
+</Project>
