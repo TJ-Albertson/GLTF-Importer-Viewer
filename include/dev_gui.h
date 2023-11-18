@@ -11,7 +11,7 @@
 #include <scene_graph.h>
 #include <my_math.h>
 
-#include "gltf.h"
+#include "gltf/gltf.h"
 
 bool animationPlaying = false;
 double previousTimeFPS;
