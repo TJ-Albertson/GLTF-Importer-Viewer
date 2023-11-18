@@ -8,7 +8,7 @@
 //#include <camera.h>
 #include <input.h>
 #include <nfd/nfd.h>
-#include <scene_graph.h>
+//#include <scene_graph.h>
 #include <my_math.h>
 
 #include "gltf/gltf.h"
@@ -24,7 +24,7 @@ glm::vec3 sliderColor = glm::vec3(1.0f, 1.0f, 1.0f);
 float dayNightSpeed = 0.02f;
 
 Camera* playerCamera;
-SceneNode* selectedNode;
+//SceneNode* selectedNode;
 
 bool polygonMode = false;
 bool showCollisionData = false;
@@ -155,203 +155,7 @@ void TextureWindow()
     ImGui::End();
 }
 
-void move_children(SceneNode* node, glm::vec3 translation)
-{
-    glm::mat4 model = node->m_modelMatrix;
 
-    model = glm::translate(model, translation);
-
-    node->m_modelMatrix = model;
-
-    SceneNode* child = node->firstChild;
-    while (child != NULL) {
-        move_children(child, translation);
-        child = child->nextSibling;
-    }
-}
-
-void TransformModel()
-{
-    ImGui::Begin("Model");
-
-    if (selectedNode) {
-        ImGui::Text("Selected Model: %s", selectedNode->name);
-
-        glm::mat4 modelMatrix = selectedNode->m_modelMatrix;
-
-        glm::vec3 worldTranslation = glm::vec3(modelMatrix[3]);
-        glm::vec3 worldScale = glm::vec3(modelMatrix[0][0], modelMatrix[1][1], modelMatrix[2][2]);
-        glm::vec3 worldRotation;
-        worldRotation.x = glm::degrees(atan2(modelMatrix[2][1], modelMatrix[2][2]));
-        worldRotation.y = glm::degrees(atan2(-modelMatrix[2][0], glm::length(glm::vec2(modelMatrix[2][1], modelMatrix[2][2]))));
-        worldRotation.z = glm::degrees(atan2(modelMatrix[1][0], modelMatrix[0][0]));
-
-
-        ImGui::Separator();
-        ImGui::SeparatorText("World Position");
-        ImGui::Text("Translation: %0.2f %0.2f %0.2f", worldTranslation.x, worldTranslation.y, worldTranslation.z);
-        ImGui::Text("   Rotation: %0.2f %0.2f %0.2f", worldRotation.x, worldRotation.y, worldRotation.z);
-        ImGui::Text("      Scale: %0.2f %0.2f %0.2f", worldScale.x, worldScale.y, worldScale.z);
-
-
-        glm::vec3 translation = selectedNode->m_pos;
-        glm::vec3 rotation = selectedNode->m_eulerRot;
-        glm::vec3 scale = selectedNode->m_scale;
-
-        ImGui::Separator();
-        ImGui::SeparatorText("Translation");
-        ImGui::DragFloat("Translation X", &translation.x, 0.005f);
-        ImGui::DragFloat("Translation Y", &translation.y, 0.005f);
-        ImGui::DragFloat("Translation Z", &translation.z, 0.005f);
-
-        ImGui::SeparatorText("Rotation");
-        ImGui::DragFloat("Rotation X", &rotation.x, 0.005f);
-        ImGui::DragFloat("Rotation Y", &rotation.y, 0.005f);
-        ImGui::DragFloat("Rotation Z", &rotation.z, 0.005f);
-
-        ImGui::SeparatorText("Scale");
-        ImGui::DragFloat("Scale X", &scale.x, 0.005f);
-        ImGui::DragFloat("Scale Y", &scale.y, 0.005f);
-        ImGui::DragFloat("Scale Z", &scale.z, 0.005f);
-
-
-        if (translation != selectedNode->m_pos) {
-            selectedNode->m_pos = translation;
-            MarkChildNodes(selectedNode);
-        }
-
-        if (scale != selectedNode->m_scale) {
-            selectedNode->m_scale = scale;
-            MarkChildNodes(selectedNode);
-        }
-
-        if (rotation != selectedNode->m_eulerRot) {
-            selectedNode->m_eulerRot = rotation;
-            MarkChildNodes(selectedNode);
-        }
-
-    } else {
-        ImGui::Text("No Model Selected");
-    }
-
-    ImGui::End();
-}
-
-void DrawTree(SceneNode* node)
-{
-    if (ImGui::TreeNode(node->name)) {
-
-        if (node->type == "model") {
-            ImGui::Text("shaderID: %d", node->shaderID);
-            ImGui::Text("m_NumMeshes: %d", node->model->m_NumMeshes);
-            ImGui::Text("m_NumAnimations: %d", node->model->m_NumAnimations);
-        }
-
-        ImGui::Text("id: %d", node->id);
-
-        if (ImGui::Button("Click Me")) {
-            selectedNode = node;
-        }
-
-        SceneNode* child = node->firstChild;
-        while (child != NULL) {
-            DrawTree(child);
-            child = child->nextSibling;
-        }
-
-        ImGui::TreePop();
-    }
-}
-
-void SceneWindow()
-{
-    ImGui::Begin("Scene");
-
-    if (root_node != NULL) {
-        SceneNode* child = root_node->firstChild;
-        while (child != NULL) {
-            DrawTree(child);
-            child = child->nextSibling;
-        }
-    }
-   
-
-    ImGui::End();
-}
-
-void AABB_Tree(AABB_node* node)
-{
-    AABB aabb = node->aabb;
-
-    std::string type = "NODE";
-
-    if (node->type == LEAF) {
-        type = "LEAF";
-    }
-
-    if ( ImGui::TreeNode(type.c_str()) ) {
-        ImGui::Text("Minimum coordinates: (%f, %f, %f)\n", aabb.min.x, aabb.min.y, aabb.min.z);
-        ImGui::Text("Maximum coordinates: (%f, %f, %f)\n", aabb.max.x, aabb.max.y, aabb.max.z);
-
-        if (type == "NODE") {
-            AABB_Tree(node->left);
-            AABB_Tree(node->right);
-        }
-
-        ImGui::TreePop();
-    }
-}
-
-void AABB_Window()
-{
-    ImGui::Begin("AABB");
-
-    for (int i = 0; i < hitboxes.size(); i++) {
-
-        std::string headerName = std::string("AABB %d", i);
-
-        ImGui::CollapsingHeader("AABB");
-
-        Hitbox hitbox = hitboxes[i];
-        AABB_node* node = hitbox.rootAABB;
-        AABB aabb = node->aabb;
-
-        glm::mat4 matrix = *hitbox.m_Matrix;
-
-        std::string matrixStr;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                matrixStr += std::to_string(matrix[i][j]);
-                if (j < 3) {
-                    matrixStr += ", ";
-                }
-            }
-            if (i < 3) {
-                matrixStr += "\n";
-            }
-        }
-
-        // Inside your ImGui rendering loop
-        ImGui::Text("Matrix Contents:");
-        ImGui::Text(matrixStr.c_str());
-
-        if (ImGui::TreeNode("Root Node")) {
-
-            ImGui::Text("Minimum coordinates: (%f, %f, %f)\n", aabb.min.x, aabb.min.y, aabb.min.z);
-            ImGui::Text("Maximum coordinates: (%f, %f, %f)\n", aabb.max.x, aabb.max.y, aabb.max.z);
-
-            AABB_Tree(node->left);
-            AABB_Tree(node->right);
-
-            ImGui::TreePop();
-        }
-
-        
-
-    }
-
-    ImGui::End();
-}
 
 void MainMenuBar()
 {
@@ -375,7 +179,7 @@ void MainMenuBar()
                         }
                     }
 
-                    CreateNode(root_node, outPath);
+                    //createNode(root_node, outPath);
 
                     free(outPath);
                 } else if (result == NFD_CANCEL) {
@@ -490,8 +294,9 @@ void MainMenuBar()
 
         if (ImGui::BeginMenu("Collision")) {
 
+            /*
             ImGui::Checkbox("Show Hitboxes", &drawHitboxes);
-            ImGui::Separator();
+            ImGui::Separator();*/
 
             ImGui::Checkbox("glPolygonMode", &polygonMode);
             ImGui::Separator();
@@ -570,9 +375,6 @@ void Main_GUI_Loop(double time)
     }
 
     MainMenuBar();
-    SceneWindow();
-    TransformModel();
-    AABB_Window();
 
     // Frame End
     ImGui::Render();

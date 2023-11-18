@@ -135,9 +135,17 @@
   <ItemGroup>
     <ClCompile Include="cJSON.c" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="include\imgui\imgui.cpp" />
+    <ClCompile Include="include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="include\imgui\imgui_tables.cpp" />
+    <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\dev_gui.h" />
     <ClInclude Include="include\gltf\gltf.h" />
     <ClInclude Include="include\gltf\gltf_gl.h" />
@@ -145,6 +153,10 @@
     <ClInclude Include="include\gltf\gltf_print.h" />
     <ClInclude Include="include\gltf\gltf_process.h" />
     <ClInclude Include="include\gltf\gltf_structures.h" />
+    <ClInclude Include="include\my_math.h" />
+    <ClInclude Include="include\shader_m.h" />
+    <ClInclude Include="include\skybox.h" />
+    <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

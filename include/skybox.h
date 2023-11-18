@@ -116,7 +116,7 @@ void LoadSkybox(std::string (*filepath)(std::string path), std::string skybox)
 
     stbi_set_flip_vertically_on_load(true);
 
-    cloudTexture = TextureFromFile("clouds.png", filepath("/resources/textures"));
+    //cloudTexture = TextureFromFile("clouds.png", filepath("/resources/textures"));
 
     glUseProgram(skyboxShader);
     setShaderInt(skyboxShader, "skybox", 0);

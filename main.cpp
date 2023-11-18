@@ -14,13 +14,14 @@
 //#include <animation.h>
 //#include <collision.h>
 #include <dev_gui.h>
-#include <grid.h>
-#include <my_math.h>
+//#include <grid.h>
+//#include <my_math.h>
 #include <shader_m.h>
 #include <skybox.h>
+#include "utils.h"
 //#include <terrain.h>
 
-#include <log_file_functions.h>
+//#include <log_file_functions.h>
 //#include <scene_graph.h>
 
 
@@ -179,10 +180,10 @@ int main()
 
     // unsigned int VAO = gltf_LoadMeshVertexData(testMesh.vertices, testMesh.indices, testMesh.numVertices, testMesh.numIndices);
 
-    unsigned int pbrShader = createShader(filepath("/shaders/pbr/pbr.vs"), filepath("/shaders/pbr/pbr.fs"));
+    unsigned int pbrShader = createShader(filepath("/resources/shaders/pbr/pbr.vs"), filepath("/resources/shaders/pbr/pbr.fs"));
     // unsigned int pbrShader = createShader(filepath("/shaders/basic/basic.vs"), filepath("/shaders/basic/basic.fs"));
 
-    unsigned int grid_VAO = LoadGrid();
+   // unsigned int grid_VAO = LoadGrid();
 
     float previousTime = glfwGetTime();
     float currentTime;
@@ -255,7 +256,7 @@ int main()
             model = glm::scale(model, glm::vec3(0.5f));
             setShaderMat4(pbrShader, "model", model);
             setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-            // gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
+            gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
         }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
