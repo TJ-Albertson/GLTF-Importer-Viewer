@@ -158,6 +158,10 @@
     <ClInclude Include="include\skybox.h" />
     <ClInclude Include="include\utils.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\pbr\pbr.fs" />
+    <None Include="resources\shaders\pbr\pbr.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -103,6 +103,7 @@ unsigned int gltf_load_texture(gltfTexture texture, int type, gltfSampler* gltf_
                 data[i] = data[i + 2];
                 data[i + 1] = data[i + 2];
             }
+
             glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         } else if (type == 2) {
             // roughness value in "green" color channel

@@ -266,7 +266,7 @@ int gltf_parse(const char* jsonString, g_Model& model)
     model.m_Scene = gltf_scene;
 
     for (int i = 0; i < numMaterials; ++i) {
-        //model.m_Materials[i] = gltf_load_material(gltfMaterials[i], gltfImages, gltfSamplers, gltfTextures);
+        model.m_Materials[i] = gltf_load_material(gltfMaterials[i], gltfImages, gltfSamplers, gltfTextures);
     }
 
     for (int i = 0; i < numMeshes; ++i) {

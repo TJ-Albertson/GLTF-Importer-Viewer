@@ -11,6 +11,90 @@ all the functions for processing gltf objects
 
 #include "gltf_structures.h"
 
+gltfAnimationTarget gltf_process_animation_target(cJSON* targetNode) 
+{
+
+}
+
+gltfChannel gltf_process_channel(cJSON* channelNode)
+{
+
+}
+
+gltfAnimationSampler gltf_process_animation_sampler(cJSON* samplerNode)
+{
+    gltfAnimationSampler gltf_sampler;
+
+    if (cJSON_GetObjectItem(samplerNode, "input")) {
+        gltf_sampler.m_Input = cJSON_GetObjectItem(samplerNode, "input")->valueint;
+    } else {
+        gltf_sampler.m_Input = -1;
+    }
+
+    if (cJSON_GetObjectItem(samplerNode, "interpolation")) {
+        strncpy(gltf_sampler.m_Interpolation, cJSON_GetObjectItem(samplerNode, "interpolation")->valuestring, sizeof(gltf_sampler.m_Interpolation));
+    } else {
+        strncpy(gltf_sampler.m_Interpolation, "null\0", sizeof(gltf_sampler.m_Interpolation));
+    }
+
+    if (cJSON_GetObjectItem(samplerNode, "output")) {
+        gltf_sampler.m_Output = cJSON_GetObjectItem(samplerNode, "output")->valueint;
+    } else {
+        gltf_sampler.m_Output = -1;
+    }
+
+    return gltf_sampler;
+}
+
+gltfAnimation gltf_process_animation(cJSON* animationNode)
+{
+    gltfAnimation gltf_animation;
+
+    if (cJSON_GetObjectItem(animationNode, "name")) {
+        strncpy(gltf_animation.m_Name, cJSON_GetObjectItem(animationNode, "name")->valuestring, sizeof(gltf_animation.m_Name));
+    } else {
+        strncpy(gltf_animation.m_Name, "null\0", sizeof(gltf_animation.m_Name));
+    }
+
+    if (cJSON_GetObjectItem(animationNode, "channels")) {
+
+        cJSON* channels = cJSON_GetObjectItem(animationNode, "channels");
+        int numChannels = cJSON_GetArraySize(channels);
+
+        gltf_animation.m_NumChannels = numChannels;
+        gltf_animation.m_Channels = (gltfChannel*)malloc(numChannels * sizeof(gltfChannel));
+
+        for (int i = 0; i < numChannels; ++i) {
+            cJSON* channel = cJSON_GetArrayItem(channels, i);
+
+            gltf_animation.m_Channels[i] = gltf_process_channel(channel);
+        }
+
+    } else {
+        fprintf(stderr, "Error: 'channels' field not found in animation.\n");
+    }
+
+    if (cJSON_GetObjectItem(animationNode, "samplers")) {
+
+        cJSON* samplers = cJSON_GetObjectItem(animationNode, "samplers");
+        int numSamplers = cJSON_GetArraySize(samplers);
+
+        gltf_animation.m_NumSamplers = numSamplers;
+        gltf_animation.m_Samplers = (gltfAnimationSampler*)malloc(numSamplers * sizeof(gltfAnimationSampler));
+
+        for (int i = 0; i < numSamplers; ++i) {
+            cJSON* sampler = cJSON_GetArrayItem(samplers, i);
+
+            gltf_animation.m_Samplers[i] = gltf_process_animation_sampler(sampler);
+        }
+
+    } else {
+        fprintf(stderr, "Error: 'samplers' field not found in animation.\n");
+    }
+
+    return gltf_animation;
+}
+
 gltfBuffer gltf_process_buffer(cJSON* bufferNode)
 {
     gltfBuffer gltf_buffer;

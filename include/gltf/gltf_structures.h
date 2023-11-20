@@ -212,24 +212,30 @@ typedef struct gltfMaterial {
  */
 typedef struct gltfAnimationTarget {
     int m_Node;
+    //interpolation type
     char m_Path[256];
 } gltfAnimationTarget;
 
-typedef struct glftChannel {
+typedef struct gltfChannel {
     int m_AnimationSamplerIndex;
     gltfAnimationTarget m_Target;
-} glftChannel;
+} gltfChannel;
 
 typedef struct gltfAnimationSampler {
+    //Accessor index of times for keyframes
     int m_Input;
+    //Accessor index of transformations for keyframes
     int m_Output;
     char m_Interpolation[256];
 };
 typedef struct gltfAnimation {
 
     char m_Name[256];
+    
+    int m_NumChannels;
+    gltfChannel* m_Channels;
 
-    glftChannel* m_Channels;
+    int m_NumSamplers;
     gltfAnimationSampler* m_Samplers;
 
 } gltfAnimation;

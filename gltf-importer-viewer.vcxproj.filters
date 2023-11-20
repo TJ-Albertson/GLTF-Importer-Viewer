@@ -96,4 +96,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\pbr\pbr.fs">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\pbr\pbr.vs">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+  </ItemGroup>
 </Project>

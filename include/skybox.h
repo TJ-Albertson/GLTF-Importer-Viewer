@@ -80,7 +80,7 @@ unsigned int loadCubemapAlpha(std::vector<std::string> faces);
 
 void LoadSkybox(std::string (*filepath)(std::string path), std::string skybox)
 {
-    skyboxShader = createShader(filepath("/shaders/skybox.vs"), filepath("/shaders/skybox.fs"));
+    skyboxShader = createShader(filepath("/resources/shaders/skybox.vs"), filepath("/resources/shaders/skybox.fs"));
     
     glGenVertexArrays(1, &skyboxVAO);
     glGenBuffers(1, &skyboxVBO);

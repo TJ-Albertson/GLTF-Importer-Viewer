@@ -181,9 +181,10 @@ int main()
     // unsigned int VAO = gltf_LoadMeshVertexData(testMesh.vertices, testMesh.indices, testMesh.numVertices, testMesh.numIndices);
 
     unsigned int pbrShader = createShader(filepath("/resources/shaders/pbr/pbr.vs"), filepath("/resources/shaders/pbr/pbr.fs"));
-    // unsigned int pbrShader = createShader(filepath("/shaders/basic/basic.vs"), filepath("/shaders/basic/basic.fs"));
+    //unsigned int pbrShader = createShader(filepath("/resources/shaders/basic/basic.vs"), filepath("/resources/shaders/basic/basic.fs"));
 
    // unsigned int grid_VAO = LoadGrid();
+    LoadSkybox(filepath, "skybox7");
 
     float previousTime = glfwGetTime();
     float currentTime;
@@ -258,6 +259,8 @@ int main()
             setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
             gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
         }
+
+        DrawSkybox(*playerCamera, view, projection, currentTime);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
