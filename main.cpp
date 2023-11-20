@@ -174,7 +174,8 @@ int main()
     // LoadGLTF("C:/Users/tjalb/OneDrive/Documents/assets/gltf/cube3.gltf");
 
     g_Model gltf_model;
-    gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
+    //gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
+    gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/anim_test.gltf", gltf_model);
 
     return 1;
 

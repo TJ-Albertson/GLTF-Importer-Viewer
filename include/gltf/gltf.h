@@ -227,7 +227,6 @@ int gltf_parse(const char* jsonString, g_Model& model)
         gltfBuffers[i] = gltf_process_buffer(buffer);
     }
 
-    cJSON_Delete(root);
 
     // print_gltf_scene(gltf_scene);
     // print_gltf_materials(gltfMaterials, numMaterials);
@@ -238,7 +237,8 @@ int gltf_parse(const char* jsonString, g_Model& model)
     // print_gltf_bufferViews(gltfBufferViews, numbufferViews);
     // print_gltf_samplers(gltfSamplers, numSamplers);
     // print_gltf_buffers(gltfBuffers, numBuffers);
-    //gltf_print_animations(gltfAnimations, numAnimations);
+    gltf_print_animations(gltfAnimations, numAnimations);
+    gltf_print_skins(gltfSkins, numSkins);
 
     // Reading binary files into buffers
     int totalBufferSize = 0;
@@ -300,11 +300,16 @@ int gltf_parse(const char* jsonString, g_Model& model)
     free(gltfAccessors);
     free(gltfBufferViews);
     free(gltfSamplers);
+    free(gltfAnimations);
+    free(gltfSkins);
 
     for (int i = 0; i < numBuffers; ++i) {
         free(allocatedBuffers[i]);
     }
     free(allocatedBuffers);
+
+    
+    cJSON_Delete(root);
 
     return 1;
 }

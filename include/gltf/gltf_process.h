@@ -51,7 +51,7 @@ gltfAnimationTarget gltf_process_animation_target(cJSON* targetNode)
     gltfAnimationTarget gltf_target;
 
     if (cJSON_GetObjectItem(targetNode, "node")) {
-        gltf_target.m_NodeIndex = cJSON_GetObjectItem(targetNode, "input")->valueint;
+        gltf_target.m_NodeIndex = cJSON_GetObjectItem(targetNode, "node")->valueint;
     } else {
         gltf_target.m_NodeIndex = -1;
     }
@@ -70,7 +70,7 @@ gltfChannel gltf_process_channel(cJSON* channelNode)
     gltfChannel gltf_channel;
 
     if (cJSON_GetObjectItem(channelNode, "sampler")) {
-        gltf_channel.m_AnimationSamplerIndex = cJSON_GetObjectItem(channelNode, "input")->valueint;
+        gltf_channel.m_AnimationSamplerIndex = cJSON_GetObjectItem(channelNode, "sampler")->valueint;
     } else {
         gltf_channel.m_AnimationSamplerIndex = -1;
     }
