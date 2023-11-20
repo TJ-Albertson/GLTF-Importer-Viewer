@@ -116,7 +116,6 @@ int gltf_parse(const char* jsonString, g_Model& model)
     gltf_scene.m_NumNodes = numRootNodes;
     gltf_scene.m_Nodes = (gltfNode*)malloc(numRootNodes * sizeof(gltfNode));
 
-    // "scene": []
     cJSON* nodes = cJSON_GetObjectItem(root, "nodes");
 
     for (int i = 0; i < numRootNodes; ++i) {

@@ -700,12 +700,12 @@ gltfNode gltf_traverse_node(cJSON* node)
         int numChildren = cJSON_GetArraySize(children);
 
         gltf_node.m_NumChildren = numChildren;
-        gltf_node.m_Children = (gltfNode*)malloc(numChildren * sizeof(gltfNode));
+        // gltf_node.m_Children = (gltfNode*)malloc(numChildren * sizeof(gltfNode));
 
         for (int i = 0; i < numChildren; ++i) {
             cJSON* child = cJSON_GetArrayItem(children, i);
 
-            gltf_node.m_Children[i] = gltf_traverse_node(child);
+           // gltf_node.m_Children[i] = gltf_traverse_node(child);
         }
 
     } else {
