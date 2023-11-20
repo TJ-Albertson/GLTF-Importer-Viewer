@@ -311,4 +311,46 @@ void print_gltf_buffers(gltfBuffer* gltf_buffers, int numBuffers)
     }
 }
 
+
+
+
+void gltf_print_animation_target(gltfAnimationTarget target)
+{
+
+}
+
+void gltf_print_channel(gltfChannel channel)
+{
+
+}
+
+void gltf_print_animation_sampler(gltfAnimationSampler sampler)
+{
+
+}
+
+void gltf_print_animation(gltfAnimation animation)
+{
+    printf("    Name: %s\n", animation.m_Name);
+
+    for (int i = 0; i < animation.m_NumChannels; ++i) {
+        printf("    Channels:\n");
+        gltf_print_channel(animation.m_Channels[i]);
+    }
+
+    for (int i = 0; i < animation.m_NumSamplers; ++i) {
+        printf("    Samplers:\n");
+        gltf_print_animation_sampler(animation.m_Samplers[i]);
+    }
+}
+
+void gltf_print_animations(gltfAnimation* gltf_animations, int numAnimations)
+{
+    printf("Animations\n");
+
+    for (int i = 0; i < numAnimations; ++i) {
+        gltf_print_animation(gltf_animations[i]);
+    }
+}
+
 #endif

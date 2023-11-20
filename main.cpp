@@ -176,6 +176,8 @@ int main()
     g_Model gltf_model;
     gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
 
+    return 1;
+
     selectedMaterial = gltf_model.m_Materials[0];
 
     // unsigned int VAO = gltf_LoadMeshVertexData(testMesh.vertices, testMesh.indices, testMesh.numVertices, testMesh.numIndices);

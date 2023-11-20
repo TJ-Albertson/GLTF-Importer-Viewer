@@ -211,7 +211,7 @@ typedef struct gltfMaterial {
  *   Animation
  */
 typedef struct gltfAnimationTarget {
-    int m_Node;
+    int m_NodeIndex;
     //interpolation type
     char m_Path[256];
 } gltfAnimationTarget;

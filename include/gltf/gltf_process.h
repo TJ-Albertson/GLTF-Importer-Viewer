@@ -13,12 +13,40 @@ all the functions for processing gltf objects
 
 gltfAnimationTarget gltf_process_animation_target(cJSON* targetNode) 
 {
+    gltfAnimationTarget gltf_target;
 
+    if (cJSON_GetObjectItem(targetNode, "node")) {
+        gltf_target.m_NodeIndex = cJSON_GetObjectItem(targetNode, "input")->valueint;
+    } else {
+        gltf_target.m_NodeIndex = -1;
+    }
+
+    if (cJSON_GetObjectItem(targetNode, "path")) {
+        strncpy(gltf_target.m_Path, cJSON_GetObjectItem(targetNode, "path")->valuestring, sizeof(gltf_target.m_Path));
+    } else {
+        strncpy(gltf_target.m_Path, "null\0", sizeof(gltf_target.m_Path));
+    }
+
+    return gltf_target;
 }
 
 gltfChannel gltf_process_channel(cJSON* channelNode)
 {
+    gltfChannel gltf_channel;
 
+    if (cJSON_GetObjectItem(channelNode, "sampler")) {
+        gltf_channel.m_AnimationSamplerIndex = cJSON_GetObjectItem(channelNode, "input")->valueint;
+    } else {
+        gltf_channel.m_AnimationSamplerIndex = -1;
+    }
+
+    if (cJSON_GetObjectItem(channelNode, "target")) {
+        cJSON* target = cJSON_GetObjectItem(channelNode, "target");
+
+        gltf_channel.m_Target = gltf_process_animation_target(target);
+    }
+
+    return gltf_channel;
 }
 
 gltfAnimationSampler gltf_process_animation_sampler(cJSON* samplerNode)
