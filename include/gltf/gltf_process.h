@@ -11,6 +11,41 @@ all the functions for processing gltf objects
 
 #include "gltf_structures.h"
 
+gltfSkin gltf_process_skin(cJSON* skinNode)
+{
+    gltfSkin gltf_skin;
+
+    if (cJSON_GetObjectItem(skinNode, "name")) {
+        strncpy(gltf_skin.m_Name, cJSON_GetObjectItem(skinNode, "name")->valuestring, sizeof(gltf_skin.m_Name));
+    } else {
+        strncpy(gltf_skin.m_Name, "null\0", sizeof(gltf_skin.m_Name));
+    }
+
+    if (cJSON_GetObjectItem(skinNode, "inverseBindMatrices")) {
+        gltf_skin.m_InverseBindMatrices = cJSON_GetObjectItem(skinNode, "inverseBindMatrices")->valueint;
+    } else {
+        gltf_skin.m_InverseBindMatrices = -1;
+    }
+
+    if (cJSON_GetObjectItem(skinNode, "joints")) {
+        cJSON* joints = cJSON_GetObjectItem(skinNode, "joints");
+        int numJoints = cJSON_GetArraySize(joints);
+        int* gltf_joints = (int*)malloc(numJoints * sizeof(int));
+
+        for (int i = 0; i < numJoints; ++i) {
+            gltf_joints[i] = cJSON_GetArrayItem(joints, i)->valueint;
+        }
+
+        gltf_skin.m_NumJoints = numJoints;
+        gltf_skin.m_Joints = gltf_joints;
+    } else {
+        gltf_skin.m_NumJoints = -1;
+        gltf_skin.m_Joints = NULL;
+    }
+
+    return gltf_skin;
+}
+
 gltfAnimationTarget gltf_process_animation_target(cJSON* targetNode) 
 {
     gltfAnimationTarget gltf_target;

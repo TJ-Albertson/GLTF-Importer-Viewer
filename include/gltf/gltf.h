@@ -127,6 +127,24 @@ int gltf_parse(const char* jsonString, g_Model& model)
     }
 
     // "animations": []
+    cJSON* animations = cJSON_GetObjectItem(root, "animations");
+    int numAnimations = cJSON_GetArraySize(animations);
+    gltfAnimation* gltfAnimations = (gltfAnimation*)malloc(numAnimations * sizeof(gltfAnimation));
+
+    for (int i = 0; i < numAnimations; ++i) {
+        cJSON* animation = cJSON_GetArrayItem(animations, i);
+        gltfAnimations[i] = gltf_process_animation(animation);
+    }
+
+    // "skins": []
+    cJSON* skins = cJSON_GetObjectItem(root, "skins");
+    int numSkins = cJSON_GetArraySize(skins);
+    gltfSkin* gltfSkins = (gltfSkin*)malloc(numSkins * sizeof(gltfSkins));
+
+    for (int i = 0; i < numSkins; ++i) {
+        cJSON* skin = cJSON_GetArrayItem(skins, i);
+        gltfSkins[i] = gltf_process_skin(skin);
+    }
 
     // "materials: []
     cJSON* materials = cJSON_GetObjectItem(root, "materials");
@@ -220,6 +238,7 @@ int gltf_parse(const char* jsonString, g_Model& model)
     // print_gltf_bufferViews(gltfBufferViews, numbufferViews);
     // print_gltf_samplers(gltfSamplers, numSamplers);
     // print_gltf_buffers(gltfBuffers, numBuffers);
+    //gltf_print_animations(gltfAnimations, numAnimations);
 
     // Reading binary files into buffers
     int totalBufferSize = 0;

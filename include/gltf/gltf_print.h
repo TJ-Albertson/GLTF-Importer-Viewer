@@ -316,17 +316,40 @@ void print_gltf_buffers(gltfBuffer* gltf_buffers, int numBuffers)
 
 void gltf_print_animation_target(gltfAnimationTarget target)
 {
-
+    if (target.m_NodeIndex >= 0) {
+        printf("                Node: %d\n", target.m_NodeIndex);
+    }
+  
+    printf("                Path: %s\n", target.m_Path);
 }
 
 void gltf_print_channel(gltfChannel channel)
 {
+    printf("        Channel:\n");
 
+    if (channel.m_AnimationSamplerIndex >= 0) {
+        printf("            Index: %d\n", channel.m_AnimationSamplerIndex);
+    }
+    
+    printf("            Target:\n");
+    gltf_print_animation_target(channel.m_Target);
+
+    printf("\n");
 }
 
 void gltf_print_animation_sampler(gltfAnimationSampler sampler)
 {
+    printf("        Sampler:\n");
 
+    if (sampler.m_Input >= 0) {
+        printf("            Input: %d\n", sampler.m_Input);
+    }
+
+    printf("            %s\n", sampler.m_Interpolation);
+
+    if (sampler.m_Output >= 0) {
+        printf("            Output: %d\n", sampler.m_Output);
+    }
 }
 
 void gltf_print_animation(gltfAnimation animation)
@@ -346,10 +369,36 @@ void gltf_print_animation(gltfAnimation animation)
 
 void gltf_print_animations(gltfAnimation* gltf_animations, int numAnimations)
 {
-    printf("Animations\n");
+    printf("Animations:\n");
 
     for (int i = 0; i < numAnimations; ++i) {
         gltf_print_animation(gltf_animations[i]);
+    }
+}
+
+void gltf_print_skin(gltfSkin gltf_skin) 
+{
+    printf("    Name: %s\n", gltf_skin.m_Name);
+    
+    if (gltf_skin.m_InverseBindMatrices >= 0) {
+        printf("        InverseBindMatrices: %d\n", gltf_skin.m_InverseBindMatrices);
+    }
+
+    if (gltf_skin.m_NumJoints > 0) {
+        printf("        Joints: [ ");
+        for (int i = 0; i < gltf_skin.m_NumJoints - 1; ++i) {
+            printf("%d, ", gltf_skin.m_Joints[i]);
+        }
+        printf("%d ]\n", gltf_skin.m_Joints[gltf_skin.m_NumJoints - 1]);
+    }
+}
+
+void gltf_print_skins(gltfSkin* gltf_skins, int numSkins)
+{
+    printf("Skins:\n");
+
+    for (int i = 0; i < numSkins; ++i) {
+        gltf_print_skin(gltf_skins[i]);
     }
 }
 
