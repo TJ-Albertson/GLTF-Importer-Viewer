@@ -65,7 +65,7 @@ typedef struct gltfNode {
     int m_SkinIndex;
 
     int m_NumChildren;
-    gltfNode* m_Children;
+    int* m_ChildrenIndexes;
 } gltfNode;
 
 typedef struct gltfScene {

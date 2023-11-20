@@ -6,6 +6,8 @@ print functions
 #ifndef GLTF_PRINT_H
 #define GLTF_PRINT_H
 
+
+
 void print_gltf_node(gltfNode node)
 {
     printf("            Name: %s\n", node.m_Name);
@@ -18,6 +20,23 @@ void print_gltf_node(gltfNode node)
     }
     if (node.m_SkinIndex >= 0) {
         printf("            m_SkinIndex: %d\n", node.m_SkinIndex);
+    }
+
+    if (node.m_NumChildren > 0) {
+        printf("            m_Children: [ ");
+        for (int i = 0; i < node.m_NumChildren - 1; ++i) {
+            printf("%d, ", node.m_ChildrenIndexes[i]);
+        }
+        printf("%d ]\n", node.m_ChildrenIndexes[node.m_NumChildren - 1]);
+    }
+}
+
+void gltf_print_nodes(gltfNode* nodes, int numNodes) {
+    printf("Nodes:\n");
+
+    for (int i = 0; i < numNodes; ++i) {
+        print_gltf_node(nodes[i]);
+        printf("\n");
     }
 }
 
@@ -345,7 +364,7 @@ void gltf_print_animation_sampler(gltfAnimationSampler sampler)
         printf("            Input: %d\n", sampler.m_Input);
     }
 
-    printf("            %s\n", sampler.m_Interpolation);
+    printf("            Path: %s\n", sampler.m_Interpolation);
 
     if (sampler.m_Output >= 0) {
         printf("            Output: %d\n", sampler.m_Output);

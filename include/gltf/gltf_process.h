@@ -671,6 +671,23 @@ gltfNode gltf_process_node(cJSON* node)
         gltf_node.m_SkinIndex = -1;
     }
 
+    if (cJSON_GetObjectItem(node, "children")) {
+
+        cJSON* children = cJSON_GetObjectItem(node, "children");
+        int numChildren = cJSON_GetArraySize(children);
+        int* node_children = (int*)malloc(numChildren * sizeof(int));
+
+        for (int i = 0; i < numChildren; ++i) {
+            node_children[i] = cJSON_GetArrayItem(children, i)->valueint;
+        }
+
+        gltf_node.m_NumChildren = numChildren;
+        gltf_node.m_ChildrenIndexes = node_children;
+    } else {
+        gltf_node.m_NumChildren = -1;
+        gltf_node.m_ChildrenIndexes = NULL;
+    }
+
     return gltf_node;
 }
 

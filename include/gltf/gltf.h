@@ -116,14 +116,23 @@ int gltf_parse(const char* jsonString, g_Model& model)
     gltf_scene.m_NumNodes = numRootNodes;
     gltf_scene.m_Nodes = (gltfNode*)malloc(numRootNodes * sizeof(gltfNode));
 
-    // "nodes": []
+    // "scene": []
     cJSON* nodes = cJSON_GetObjectItem(root, "nodes");
 
-    for (int i = 0; i < numRootNodes; i++) {
+    for (int i = 0; i < numRootNodes; ++i) {
         int rootNodeIndex = cJSON_GetArrayItem(rootNodeIndexes, i)->valueint;
         cJSON* rootNode = cJSON_GetArrayItem(nodes, rootNodeIndex);
         gltfNode gltfNode = gltf_traverse_node(rootNode);
         gltf_scene.m_Nodes[i] = gltfNode;
+    }
+
+    // "nodes": []
+    int numNodes = cJSON_GetArraySize(nodes);
+    gltfNode* gltfNodes = (gltfNode*)malloc(numNodes * sizeof(gltfNode));
+
+    for (int i = 0; i < numNodes; ++i) {
+        cJSON* node = cJSON_GetArrayItem(nodes, i);
+        gltfNodes[i] = gltf_process_node(node);
     }
 
     // "animations": []
@@ -139,7 +148,7 @@ int gltf_parse(const char* jsonString, g_Model& model)
     // "skins": []
     cJSON* skins = cJSON_GetObjectItem(root, "skins");
     int numSkins = cJSON_GetArraySize(skins);
-    gltfSkin* gltfSkins = (gltfSkin*)malloc(numSkins * sizeof(gltfSkins));
+    gltfSkin* gltfSkins = (gltfSkin*)malloc(numSkins * sizeof(gltfSkin));
 
     for (int i = 0; i < numSkins; ++i) {
         cJSON* skin = cJSON_GetArrayItem(skins, i);
@@ -228,7 +237,8 @@ int gltf_parse(const char* jsonString, g_Model& model)
     }
 
 
-    // print_gltf_scene(gltf_scene);
+    print_gltf_scene(gltf_scene);
+    gltf_print_nodes(gltfNodes, numNodes);
     // print_gltf_materials(gltfMaterials, numMaterials);
     // print_gltf_meshes(gltfMeshes, numMeshes);
     // print_gltf_textures(gltfTextures, numTextures);
@@ -285,7 +295,7 @@ int gltf_parse(const char* jsonString, g_Model& model)
     model.m_Scene = gltf_scene;
 
     for (int i = 0; i < numMaterials; ++i) {
-        model.m_Materials[i] = gltf_load_material(gltfMaterials[i], gltfImages, gltfSamplers, gltfTextures);
+        //model.m_Materials[i] = gltf_load_material(gltfMaterials[i], gltfImages, gltfSamplers, gltfTextures);
     }
 
     for (int i = 0; i < numMeshes; ++i) {
