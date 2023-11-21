@@ -95,6 +95,9 @@
     <ClInclude Include="include\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\gltf\gltf_animation.h">
+      <Filter>Header Files\gltf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\pbr\pbr.fs">

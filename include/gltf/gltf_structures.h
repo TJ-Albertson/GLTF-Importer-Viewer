@@ -232,6 +232,7 @@ typedef struct gltfAnimation {
 
     char m_Name[256];
     
+    //Each channel targets a single type of transformation 
     int m_NumChannels;
     gltfChannel* m_Channels;
 

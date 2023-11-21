@@ -148,6 +148,7 @@
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\dev_gui.h" />
     <ClInclude Include="include\gltf\gltf.h" />
+    <ClInclude Include="include\gltf\gltf_animation.h" />
     <ClInclude Include="include\gltf\gltf_gl.h" />
     <ClInclude Include="include\gltf\gltf_memory.h" />
     <ClInclude Include="include\gltf\gltf_print.h" />
