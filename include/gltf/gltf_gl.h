@@ -310,48 +310,22 @@ g_Mesh gltf_load_mesh(gltfMesh mesh, gltfAccessor* gltfAccessors, gltfBufferView
             gltf_bind_attribute(TEXCOORD, accessor, gltfBufferViews, allocatedBuffers);
         }
 
+        if (attributes.m_Joints_0_Index >= 0) {
+            gltfAccessor accessor = gltfAccessors[attributes.m_Joints_0_Index];
+
+            gltf_bind_attribute(JOINTS, accessor, gltfBufferViews, allocatedBuffers);
+        }
+
+        if (attributes.m_Weights_0_Index >= 0) {
+            gltfAccessor accessor = gltfAccessors[attributes.m_Weights_0_Index];
+
+            gltf_bind_attribute(WEIGHTS, accessor, gltfBufferViews, allocatedBuffers);
+        }
+
         if (attributes.m_TangentIndex >= 0) {
             gltfAccessor accessor = gltfAccessors[attributes.m_TangentIndex];
 
-            int count = accessor.m_Count;
-
-            gltfBufferView bufferView = gltfBufferViews[accessor.m_BufferViewIndex];
-
-            int bufferIndex = bufferView.m_BufferIndex;
-
-            int offset = 0;
-
-            if (bufferView.m_ByteOffset > 0) {
-                offset += bufferView.m_ByteOffset;
-            }
-
-            if (accessor.m_ByteOffset > 0) {
-                offset += accessor.m_ByteOffset;
-            }
-
-            char* buffer = allocatedBuffers[bufferIndex];
-
-            buffer = buffer + offset;
-
-            glm::vec4* tangents = (glm::vec4*)malloc(count * sizeof(glm::vec4));
-
-            int componentSize = component_size(accessor.m_ComponentType);
-
-            printf("Tangents:\n");
-            for (int k = 0; k < count; ++k) {
-                float x, y, z, w;
-                memcpy(&x, buffer + k * componentSize, componentSize);
-                memcpy(&y, buffer + k * componentSize, componentSize);
-                memcpy(&z, buffer + k * componentSize, componentSize);
-                memcpy(&w, buffer + k * componentSize, componentSize);
-
-                printf("    tangent[%d]: %f %f %f %f\n", k, x, y, z, w);
-
-                tangents[k].x = x;
-                tangents[k].y = y;
-                tangents[k].z = z;
-                tangents[k].w = w;
-            }
+            gltf_bind_attribute(TANGENT, accessor, gltfBufferViews, allocatedBuffers);
         }
     }
 

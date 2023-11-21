@@ -29,13 +29,14 @@ typedef struct Channel {
 
 	int m_NodeIndex;
 	
+	int m_NumKeyframePosition;
+    KeyframePosition* m_KeyframePositions;
 
+	int m_NumKeyframeRotations;
+    KeyframeRotation* m_KeyframeRotations;
 
-	// get from sampler
-	int m_NumKeyframes;
-    Keyframe* m_Keyframes;
-
-
+	int m_NumKeyframeScales;
+    KeyframeScale* m_KeyframeScales;
 } Channel;
 
 typedef struct Bone {
@@ -51,8 +52,37 @@ typedef struct Animation {
 
 	int m_NumChannels;
     Channel* m_Channels;
-	
-
 } Animation;
+
+typedef struct Skin {
+    char m_Name[256];
+
+    int m_NumJoints;
+
+    int* m_Joints;
+    glm::mat4* m_InverseBindMatrices;
+} Skin;
+
+
+void CalculateNodeTransform(Animation animation, Bone* node, glm::mat4* FinalBoneMatrix, glm::mat4 parentTransform)
+{
+    glm::mat4 nodeTransform = node->m_Transformation;
+
+    bool isBoneNode = (node->id >= 0);
+    if (isBoneNode) {
+        nodeTransform = FindBoneAndGetTransform(animation, node->m_NodeName, m_CurrentTime);
+    }
+
+    glm::mat4 globalTransformation = parentTransform * nodeTransform;
+
+    if (isBoneNode) {
+        glm::mat4 finalBoneMatrix = globalTransformation * node->m_Offset;
+        FinalBoneMatrix[node->id] = finalBoneMatrix;
+    }
+
+    for (int i = 0; i < node->m_NumChildren; ++i) {
+        CalculateNodeTransform(animation, node->m_Children[i], FinalBoneMatrix, globalTransformation);
+    }
+}
 
 #endif

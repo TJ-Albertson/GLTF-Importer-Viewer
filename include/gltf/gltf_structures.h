@@ -29,7 +29,10 @@ typedef struct Material {
 enum PrimitiveAttribute {
     POSITION,
     NORMAL,
-    TEXCOORD
+    TEXCOORD,
+    JOINTS,
+    WEIGHTS,
+    TANGENT
 };
 
 enum ComponentType {
