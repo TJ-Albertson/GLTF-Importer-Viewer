@@ -190,8 +190,8 @@ int gltf_parse(const char* jsonString, g_Model& model)
     gltfImage* gltfImages = (gltfImage*)malloc(numImages * sizeof(gltfImage));
 
     for (int i = 0; i < numImages; ++i) {
-        cJSON* texture = cJSON_GetArrayItem(images, i);
-        gltfImages[i] = gltf_process_image(texture);
+        cJSON* image = cJSON_GetArrayItem(images, i);
+        gltfImages[i] = gltf_process_image(image);
     }
 
     // "accessors": []
@@ -218,7 +218,7 @@ int gltf_parse(const char* jsonString, g_Model& model)
     // "samplers: []
     cJSON* samplers = cJSON_GetObjectItem(root, "samplers");
     int numSamplers = cJSON_GetArraySize(samplers);
-    gltfSampler* gltfSamplers = (gltfSampler*)malloc(numAccessors * sizeof(gltfSampler));
+    gltfSampler* gltfSamplers = (gltfSampler*)malloc(numSamplers * sizeof(gltfSampler));
 
     for (int i = 0; i < numSamplers; ++i) {
         cJSON* sampler = cJSON_GetArrayItem(samplers, i);
@@ -290,7 +290,7 @@ int gltf_parse(const char* jsonString, g_Model& model)
     model.m_NumMaterials = numMaterials;
 
     model.m_Meshes = (g_Mesh*)malloc(numMeshes * sizeof(g_Mesh));
-    model.m_Materials = (Material*)malloc(numMaterials * sizeof(g_Mesh));
+    model.m_Materials = (Material*)malloc(numMaterials * sizeof(Material));
     model.m_Scene = gltf_scene;
 
     for (int i = 0; i < numMaterials; ++i) {
