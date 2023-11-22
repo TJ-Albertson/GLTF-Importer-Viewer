@@ -39,12 +39,17 @@ typedef struct Channel {
     KeyframeScale* m_KeyframeScales;
 } Channel;
 
-typedef struct Bone {
-	glm::mat3 m_Transformation;
+typedef struct Node {
+    float m_Translation[3];
+    float m_Rotation[4];
+    float m_Scale[3];
 
-	int m_NumChildren;
-    Bone* m_Children;
-} Bone;
+    int m_MeshIndex;
+    int m_BoneId;
+
+    int m_NumChildren;
+    Node* m_Children;
+} Node;
 
 typedef struct Animation {
 	
@@ -63,26 +68,40 @@ typedef struct Skin {
     glm::mat4* m_InverseBindMatrices;
 } Skin;
 
+typedef struct gltfSceneNode {
 
-void CalculateNodeTransform(Animation animation, Bone* node, glm::mat4* FinalBoneMatrix, glm::mat4 parentTransform)
+} gltfSceneNode;
+
+
+glm::mat4 GetNodeMatrix(Node node) {
+    
+    glm::mat4 matrix;
+    
+    return matrix;
+}
+
+/*
+void TraverseNode(Animation animation, Node node, glm::mat4* FinalBoneMatrix, glm::mat4 parentTransform)
 {
-    glm::mat4 nodeTransform = node->m_Transformation;
+    glm::mat4 nodeTransform = GetNodeMatrix(node);
 
-    bool isBoneNode = (node->id >= 0);
-    if (isBoneNode) {
-        nodeTransform = FindBoneAndGetTransform(animation, node->m_NodeName, m_CurrentTime);
+    if (node.m_BoneId >= 0) {
+        nodeTransform = FindBoneAndGetTransform(animation, node.m_NodeName, m_CurrentTime);
+        glm::mat4 finalBoneMatrix = parentTransform * nodeTransform * node.m_Offset;
+        FinalBoneMatrix[node.m_BoneId] = finalBoneMatrix;
     }
 
     glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
-    if (isBoneNode) {
-        glm::mat4 finalBoneMatrix = globalTransformation * node->m_Offset;
-        FinalBoneMatrix[node->id] = finalBoneMatrix;
+    if (node.m_MeshIndex >= 0) {
+       // draw mesh
+        //gltf_draw_mesh(int meshIndex, mat4 matrix);
     }
 
-    for (int i = 0; i < node->m_NumChildren; ++i) {
-        CalculateNodeTransform(animation, node->m_Children[i], FinalBoneMatrix, globalTransformation);
+    for (int i = 0; i < node.m_NumChildren; ++i) {
+        TraverseNode(animation, node.m_Children[i], FinalBoneMatrix, globalTransformation);
     }
 }
+*/
 
 #endif

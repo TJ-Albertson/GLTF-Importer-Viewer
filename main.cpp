@@ -149,6 +149,7 @@ void ProcessInput(GLFWwindow* window, Camera* camera, glm::vec3& velocity, float
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         ProcessKeyboard(camera, FORWARD, velocity, dt);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -157,10 +158,21 @@ void ProcessInput(GLFWwindow* window, Camera* camera, glm::vec3& velocity, float
         ProcessKeyboard(camera, LEFT, velocity, dt);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         ProcessKeyboard(camera, RIGHT, velocity, dt);
+
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
         ProcessKeyboard(camera, JUMP, velocity, dt);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         ProcessKeyboard(camera, SPRINT, velocity, dt);
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        ProcessKeyboard(camera, CAMERA_LEFT, velocity, dt);
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        ProcessKeyboard(camera, CAMERA_RIGHT, velocity, dt);
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        ProcessKeyboard(camera, CAMERA_UP, velocity, dt);
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        ProcessKeyboard(camera, CAMERA_DOWN, velocity, dt);
+
 }
 
 int main()
@@ -174,10 +186,10 @@ int main()
     // LoadGLTF("C:/Users/tjalb/OneDrive/Documents/assets/gltf/cube3.gltf");
 
     g_Model gltf_model;
-    //gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
-    gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/anim_test.gltf", gltf_model);
+    gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
+    //gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/anim_test.gltf", gltf_model);
 
-    return 1;
+   // return 1;
 
     selectedMaterial = gltf_model.m_Materials[0];
 
@@ -211,10 +223,16 @@ int main()
     setShaderInt(pbrShader, "roughnessMap", 3);
     setShaderInt(pbrShader, "aoMap", 4);
 
+    glm::vec3 zeroVector = glm::vec3(0.0f);
+
     while (!glfwWindowShouldClose(window)) {
+
 
         currentTime = glfwGetTime();
         float deltaTime = previousTime - currentTime;
+
+        ProcessInput(window, playerCamera, zeroVector, deltaTime);
+
 
         UpdateCameraVectors(playerCamera, playerState.position);
 

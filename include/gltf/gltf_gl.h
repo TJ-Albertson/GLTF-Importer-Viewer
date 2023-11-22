@@ -97,6 +97,7 @@ unsigned int gltf_load_texture(gltfTexture texture, int type, gltfSampler* gltf_
 
         glBindTexture(GL_TEXTURE_2D, textureID);
 
+        
         if (type == 1) {
             // metallness value in "blue" color channel
             for (int i = 0; i < width * height * numChannels; i += numChannels) {
@@ -125,7 +126,7 @@ unsigned int gltf_load_texture(gltfTexture texture, int type, gltfSampler* gltf_
             // Load the entire texture for other types (type = 0)
             glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         }
-
+        
         glGenerateMipmap(GL_TEXTURE_2D);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

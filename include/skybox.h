@@ -78,6 +78,48 @@ void DrawSkybox(Camera camera, glm::mat4 projection);
 unsigned int loadCubemap(std::vector<std::string> faces);
 unsigned int loadCubemapAlpha(std::vector<std::string> faces);
 
+unsigned int TextureFromFile(const char* path, const std::string& directory)
+{
+    std::string filename = std::string(path);
+    filename = directory + '/' + filename;
+
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrComponents;
+    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    if (data) {
+        GLenum format;
+        if (nrComponents == 1)
+            format = GL_RED;
+        else if (nrComponents == 3)
+            format = GL_RGB;
+        else if (nrComponents == 4)
+            format = GL_RGBA;
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        // THESE IMPORTANt TO INCREASE TEXTURE QUALITY
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2.0f);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, 2.0f);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+    } else {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
+        stbi_image_free(data);
+    }
+
+    return textureID;
+}
+
 void LoadSkybox(std::string (*filepath)(std::string path), std::string skybox)
 {
     skyboxShader = createShader(filepath("/resources/shaders/skybox.vs"), filepath("/resources/shaders/skybox.fs"));
@@ -116,7 +158,7 @@ void LoadSkybox(std::string (*filepath)(std::string path), std::string skybox)
 
     stbi_set_flip_vertically_on_load(true);
 
-    //cloudTexture = TextureFromFile("clouds.png", filepath("/resources/textures"));
+    cloudTexture = TextureFromFile("clouds.png", filepath("/resources/textures"));
 
     glUseProgram(skyboxShader);
     setShaderInt(skyboxShader, "skybox", 0);

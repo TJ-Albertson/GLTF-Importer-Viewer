@@ -154,6 +154,7 @@
     <ClInclude Include="include\gltf\gltf_print.h" />
     <ClInclude Include="include\gltf\gltf_process.h" />
     <ClInclude Include="include\gltf\gltf_structures.h" />
+    <ClInclude Include="include\input.h" />
     <ClInclude Include="include\my_math.h" />
     <ClInclude Include="include\shader_m.h" />
     <ClInclude Include="include\skybox.h" />

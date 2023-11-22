@@ -33,7 +33,11 @@ typedef enum Movement_Type {
     LEFT,
     RIGHT,
     JUMP,
-    SPRINT
+    SPRINT,
+    CAMERA_LEFT,
+    CAMERA_RIGHT,
+    CAMERA_UP,
+    CAMERA_DOWN
 } Movement_Type;
 
 void startJump() {
@@ -121,6 +125,19 @@ void ProcessKeyboard(Camera* camera, Movement_Type movement, glm::vec3& velocity
             } else {
                 camera->Yaw += 0.1f;
             }
+        }
+
+        if (movement == CAMERA_LEFT) {
+            camera->Yaw -= 0.5f;
+        }
+        if (movement == CAMERA_RIGHT) {
+            camera->Yaw += 0.5f;
+        }
+        if (movement == CAMERA_UP) {
+            camera->Pitch += 0.5f;
+        }
+        if (movement == CAMERA_DOWN) {
+            camera->Pitch -= 0.5f;
         }
 
     } break;
