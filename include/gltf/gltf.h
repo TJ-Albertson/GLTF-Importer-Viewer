@@ -206,11 +206,11 @@ int gltf_parse(const char* jsonString, g_Model& model)
 
     // "bufferViews: []
     cJSON* bufferViews = cJSON_GetObjectItem(root, "bufferViews");
-    int numbufferViews = cJSON_GetArraySize(accessors);
+    int numbufferViews = cJSON_GetArraySize(bufferViews);
+    
+    gltfBufferView* gltfBufferViews = (gltfBufferView*)malloc(numbufferViews * sizeof(gltfBufferView));
 
-    gltfBufferView* gltfBufferViews = (gltfBufferView*)malloc(numAccessors * sizeof(gltfBufferView));
-
-    for (int i = 0; i < numAccessors; ++i) {
+    for (int i = 0; i < numbufferViews; ++i) {
         cJSON* bufferView = cJSON_GetArrayItem(bufferViews, i);
         gltfBufferViews[i] = gltf_process_bufferView(bufferView);
     }
@@ -316,7 +316,6 @@ int gltf_parse(const char* jsonString, g_Model& model)
         free(allocatedBuffers[i]);
     }
     free(allocatedBuffers);
-
     
     cJSON_Delete(root);
 
