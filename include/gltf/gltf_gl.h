@@ -63,6 +63,10 @@ void gltf_bind_attribute(PrimitiveAttribute attribute, gltfAccessor accessor, gl
 
     int size = gltf_get_size(accessor.m_Type);
 
+    if (attribute == NORMAL) {
+        
+    }
+
     unsigned int VBO;
     glGenBuffers(1, &VBO);
 
@@ -222,7 +226,8 @@ void gltf_draw_mesh(unsigned int VAO, Material material, unsigned int numIndices
     glBindTexture(GL_TEXTURE_2D, material.m_OcclusionTextureId);
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(numIndices), GL_UNSIGNED_INT, 0);
+    //glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(numIndices), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, static_cast<unsigned int>(numIndices), GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
     glActiveTexture(GL_TEXTURE0);

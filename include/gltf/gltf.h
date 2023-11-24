@@ -238,8 +238,8 @@ int gltf_parse(const char* jsonString, g_Model& model)
 
     print_gltf_scene(gltf_scene);
     gltf_print_nodes(gltfNodes, numNodes);
-    // print_gltf_materials(gltfMaterials, numMaterials);
-    // print_gltf_meshes(gltfMeshes, numMeshes);
+    //print_gltf_materials(gltfMaterials, numMaterials);
+    print_gltf_meshes(gltfMeshes, numMeshes);
     // print_gltf_textures(gltfTextures, numTextures);
     // print_gltf_images(gltfImages, numImages);
     // print_gltf_accessors(gltfAccessors, numAccessors);
