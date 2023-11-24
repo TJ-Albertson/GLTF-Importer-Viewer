@@ -75,8 +75,8 @@ GLFWwindow* InitializeWindow()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
     // alpha values
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // ImGui initialization
     // -----------------------------
@@ -308,6 +308,7 @@ int main()
     setShaderInt(pbrShader, "roughnessMap", 3);
     setShaderInt(pbrShader, "aoMap", 4);
 
+
     glm::vec3 zeroVector = glm::vec3(0.0f);
 
 
@@ -337,6 +338,7 @@ int main()
         float z = cos(glfwGetTime() * timeScale) * radius;
 
         lightPositions[0] = glm::vec3(x, y, z);
+       // lightPositions[0] = lightPosition;
 
         Main_GUI_Loop(currentTime);
 
@@ -351,10 +353,8 @@ int main()
         glUseProgram(pbrShader);
         setShaderMat4(pbrShader, "projection", projection);
         setShaderMat4(pbrShader, "view", view);
-        setShaderVec3(pbrShader, "camera", playerCamera->Position);
-
- 
-
+        setShaderVec3(pbrShader, "camPos", playerCamera->Position);
+        
         glm::mat4 model = glm::mat4(1.0f);
         for (int row = 0; row < nrRows; ++row) {
             for (int col = 0; col < nrColumns; ++col) {
@@ -362,11 +362,11 @@ int main()
                 model = glm::translate(model, glm::vec3((float)(col - (nrColumns / 2)) * spacing, (float)(row - (nrRows / 2)) * spacing, 0.0f));
                 setShaderMat4(pbrShader, "model", model);
                 setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-                //gltf_draw_mesh(sphereVAO, gltf_model.m_Materials[0], indexCount, pbrShader);
-                gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
+                gltf_draw_mesh(sphereVAO, gltf_model.m_Materials[0], indexCount, pbrShader);
+                //gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
             }
         }
-
+        
         
 
         
@@ -382,7 +382,8 @@ int main()
             model = glm::scale(model, glm::vec3(0.5f));
             setShaderMat4(pbrShader, "model", model);
             setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-            gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
+            glBindVertexArray(sphereVAO);
+            glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
         }
 
         DrawSkybox(*playerCamera, view, projection, currentTime);

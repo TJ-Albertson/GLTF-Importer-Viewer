@@ -37,6 +37,8 @@ float speedModifier = 1.0f;
 Material selectedMaterial;
 bool showTextureWindow = true;
 
+glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -7.0f);
+
 static void ShowExampleAppSimpleOverlay(bool* p_open, int fps)
 {
     static int location = 1;
@@ -341,6 +343,19 @@ void MainMenuBar()
     }
 }
 
+void LightWindow()
+{
+    ImGui::Begin("Light");
+
+    ImGui::Text("Light Position: %f  %f  %f", lightPosition.x, lightPosition.y, lightPosition.z);
+
+    ImGui::DragFloat("lightPosition X", &lightPosition.x, 0.005f);
+    ImGui::DragFloat("lightPosition Y", &lightPosition.y, 0.005f);
+    ImGui::DragFloat("lightPosition Z", &lightPosition.z, 0.005f);
+
+    ImGui::End();
+}
+
 void Main_GUI_Loop(double time)
 {
     double currentTime = time;
@@ -365,6 +380,7 @@ void Main_GUI_Loop(double time)
     bool t = true;
 
     ShowExampleAppSimpleOverlay(&t, fps);
+    LightWindow();
 
     if (showCollisionData) {
         CollisionData();
