@@ -366,10 +366,7 @@ int main()
                 //gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
             }
         }
-        
-        
 
-        
 
         for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i) {
             glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);

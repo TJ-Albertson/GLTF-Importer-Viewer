@@ -231,7 +231,8 @@ void MainMenuBar()
 
         if (ImGui::BeginMenu("Camera")) {
 
-            static int e = 0;
+            //default
+            static int e = 1;
 
             ImGui::Text("Camera Type");
             ImGui::RadioButton("Free", &e, 0);
