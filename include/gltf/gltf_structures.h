@@ -59,6 +59,32 @@ int component_size(int type)
     return -1;
 }
 
+// returns size of attribute based on accessor.type
+int gltf_get_size(const char* type)
+{
+    if (strcmp("SCALAR", type) == 0) {
+        return 1;
+    }
+    if (strcmp("VEC2", type) == 0) {
+        return 2;
+    }
+    if (strcmp("VEC3", type) == 0) {
+        return 3;
+    }
+    if (strcmp("VEC4", type) == 0) {
+        return 4;
+    }
+    if (strcmp("MAT2", type) == 0) {
+        return 4;
+    }
+    if (strcmp("MAT3", type) == 0) {
+        return 9;
+    }
+    if (strcmp("MAT4", type) == 0) {
+        return 16;
+    }
+}
+
 // Can be camera sk
 typedef struct gltfNode {
     char m_Name[256];

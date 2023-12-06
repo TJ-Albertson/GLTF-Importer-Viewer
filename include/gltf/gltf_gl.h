@@ -17,31 +17,7 @@ opengl VA/texture binding functions
 
 #include "gltf_structures.h"
 
-// returns size of attribute based on accessor.type
-int gltf_get_size(const char* type)
-{
-    if (strcmp("SCALAR", type) == 0) {
-        return 1;
-    }
-    if (strcmp("VEC2", type) == 0) {
-        return 2;
-    }
-    if (strcmp("VEC3", type) == 0) {
-        return 3;
-    }
-    if (strcmp("VEC4", type) == 0) {
-        return 4;
-    }
-    if (strcmp("MAT2", type) == 0) {
-        return 4;
-    }
-    if (strcmp("MAT3", type) == 0) {
-        return 9;
-    }
-    if (strcmp("MAT4", type) == 0) {
-        return 16;
-    }
-}
+
 
 void gltf_bind_attribute(PrimitiveAttribute attribute, gltfAccessor accessor, gltfBufferView* gltfBufferViews, char** allocatedBuffers)
 {

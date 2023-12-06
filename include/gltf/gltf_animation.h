@@ -6,6 +6,8 @@ animation, skeletons
 #ifndef GLTF_ANIMATION_H
 #define GLTF_ANIMATION_H
 
+#include <string.h>
+
 #include <glm/gtx/quaternion.hpp>
 
 #include "gltf/gltf_structures.h"
@@ -53,6 +55,7 @@ typedef struct {
 
 } Animation;
 
+
 typedef struct {
     char name[32];
     int id;
@@ -96,8 +99,28 @@ float getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTi
     return scaleFactor;
 }
 
-void interpolate_linear(glm::mat4* matrix, glm::vec4 keyframe, glm::vec4 keyframe_next, Path path)
+void interpolate_linear(glm::mat4* matrix, glm::vec4 keyframe_curr, glm::vec4 keyframe_next, float scaleFactor, Path path)
 {
+    switch (path) {
+    case Translation: {
+        glm::vec3 translate = glm::mix(keyframe_curr, keyframe_next, scaleFactor);
+
+        (*matrix) = glm::translate((*matrix), glm::vec3(translate.x, translate.y, translate.x));
+    } break;
+
+    case Rotation: {
+
+    } break;
+
+    case Scale: {
+        glm::vec4 scale = glm::mix(keyframe_curr, keyframe_next, scaleFactor);
+
+        (*matrix) = glm::scale((*matrix), glm::vec3(scale.x, scale.y, scale.x));
+    } break;
+
+    default:
+        break;
+    }   
 }
 
 void interpolate_cubic(glm::mat4* matrix, CubicKeyFrame keyframe, CubicKeyFrame keyframe_next, Path path)
@@ -162,7 +185,7 @@ glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation
 
                 Path path = getPath(channel.path);
 
-                interpolate_linear(&boneTransform, keyframe_curr, keyframe_next, path);
+                interpolate_linear(&boneTransform, keyframe_curr, keyframe_next, scaleFactor, path);
             } break;
 
             case CUBICSPLINE: {
@@ -171,15 +194,159 @@ glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation
                 glm::vec4 keyFrame_in = sampler.keyFrames[(keyframeIndex - 1) % sampler.numKeyFrames];
                 glm::vec4 keyFrame_out = sampler.keyFrames[(keyframeIndex + 1) % sampler.numKeyFrames];
 
-                interpolate_cubic();
+                //interpolate_cubic();
             } break;
 
             default:
-                break
+                break;
             }
         }
     }
+
+    return boneTransform;
 }
+
+typedef struct {
+    unsigned int count;
+    int componentSize;
+    char* data;
+    
+} Buffer;
+
+Buffer getBuffer(unsigned int accessorIndex, gltfAccessor* gltfAccessors, gltfBufferView* gltfBufferViews, char** allocatedBuffers)
+{
+    Buffer buffer;
+
+    gltfAccessor accessor = gltfAccessors[accessorIndex];
+
+    int count = accessor.m_Count;
+
+    gltfBufferView bufferView = gltfBufferViews[accessor.m_BufferViewIndex];
+
+    int bufferIndex = bufferView.m_BufferIndex;
+
+    int offset = 0;
+
+    if (bufferView.m_ByteOffset > 0) {
+        offset += bufferView.m_ByteOffset;
+    }
+
+    if (accessor.m_ByteOffset > 0) {
+        offset += accessor.m_ByteOffset;
+    }
+
+    char* offsetBuffer = allocatedBuffers[bufferIndex] + offset;
+
+    int componentSize = component_size(accessor.m_ComponentType);
+
+    buffer.count = count;
+    buffer.componentSize = componentSize;
+    buffer.data = offsetBuffer;
+
+    return buffer;
+}
+
+Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccessors, gltfBufferView* gltfBufferViews, char** allocatedBuffers)
+{
+    Animation animation;
+
+    animation.numChannels = gltf_animation.m_NumChannels;
+    animation.numSamplers = gltf_animation.m_NumSamplers;
+
+    int i;
+    for (i = 0; i < gltf_animation.m_NumChannels; ++i)
+    {
+        gltfChannel gltf_channel = gltf_animation.m_Channels[i];
+
+        if (strcmp(gltf_channel.m_Target.m_Path, "translation") == 0)
+            animation.channels[i].path = 0;
+
+        if (strcmp(gltf_channel.m_Target.m_Path, "rotation") == 0)
+            animation.channels[i].path = 1;
+
+        if (strcmp(gltf_channel.m_Target.m_Path, "scale") == 0)
+            animation.channels[i].path = 2;
+
+        animation.channels[i].samplerIndex = gltf_channel.m_AnimationSamplerIndex;
+        animation.channels[i].nodeIndex = gltf_channel.m_Target.m_NodeIndex;
+    }
+
+    for (i = 0; i < gltf_animation.m_NumSamplers; ++i) {
+        gltfAnimationSampler gltf_sampler = gltf_animation.m_Samplers[i];
+
+        if (strcmp(gltf_sampler.m_Interpolation, "STEP") == 0)
+            animation.samplers[i].interpolation = 0;
+
+        if (strcmp(gltf_sampler.m_Interpolation, "LINEAR") == 0)
+            animation.samplers[i].interpolation = 1;
+
+        if (strcmp(gltf_sampler.m_Interpolation, "CUBICSPLINE") == 0)
+            animation.samplers[i].interpolation = 2;
+
+
+        Buffer input_buffer = getBuffer(gltf_sampler.m_Input, gltfAccessors, gltfBufferViews, allocatedBuffers);
+
+        int numKeyframes = input_buffer.count;
+
+        animation.samplers[i].numKeyFrames = numKeyframes;
+        animation.samplers[i].timeStamps = (float*)malloc(numKeyframes * sizeof(float));
+
+        for (int k = 0; k < numKeyframes; ++k) {
+            float x;
+            memcpy(&x, input_buffer.data + k * input_buffer.componentSize, input_buffer.componentSize);
+
+            animation.samplers[i].timeStamps[k] = x;
+        }
+        
+        Buffer output_buffer = getBuffer(gltf_sampler.m_Output, gltfAccessors, gltfBufferViews, allocatedBuffers);
+        
+        animation.samplers[i].keyFrames = (glm::vec4*)malloc(numKeyframes * sizeof(glm::vec4));
+
+        int size = gltf_get_size(gltfAccessors[gltf_sampler.m_Output].m_Type);
+
+        if (size == 3)
+        {
+            for (int k = 0; k < numKeyframes; ++k) {
+                float x, y, z;
+                memcpy(&x, output_buffer.data + k * output_buffer.componentSize, output_buffer.componentSize);
+                memcpy(&y, output_buffer.data + k * output_buffer.componentSize + 4, output_buffer.componentSize);
+                memcpy(&z, output_buffer.data + k * output_buffer.componentSize + 8, output_buffer.componentSize);
+                
+                animation.samplers[i].keyFrames[k].x = x;
+                animation.samplers[i].keyFrames[k].y = y;
+                animation.samplers[i].keyFrames[k].z = z;
+                animation.samplers[i].keyFrames[k].w = 0.0f;
+            }
+        } else /* size == 4 */ {
+            for (int k = 0; k < numKeyframes; ++k) {
+                float x, y, z, w;
+                memcpy(&x, output_buffer.data + k * output_buffer.componentSize, output_buffer.componentSize);
+                memcpy(&y, output_buffer.data + k * output_buffer.componentSize + 4, output_buffer.componentSize);
+                memcpy(&z, output_buffer.data + k * output_buffer.componentSize + 8, output_buffer.componentSize);
+                memcpy(&w, output_buffer.data + k * output_buffer.componentSize + 12, output_buffer.componentSize);
+
+                animation.samplers[i].keyFrames[k].x = x;
+                animation.samplers[i].keyFrames[k].y = y;
+                animation.samplers[i].keyFrames[k].z = z;
+                animation.samplers[i].keyFrames[k].w = w;
+            }
+        }
+
+        
+        
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 /*
 
 void mark_joint_nodes(Node* nodes, int* joints, int numJoints)

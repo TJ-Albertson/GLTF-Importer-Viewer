@@ -301,6 +301,8 @@ int gltf_parse(const char* jsonString, g_Model& model)
         model.m_Meshes[i] = gltf_load_mesh(gltfMeshes[i], gltfAccessors, gltfBufferViews, allocatedBuffers);
     }
 
+    
+
     gltf_free_materials(gltfMaterials, numMaterials);
     gltf_free_meshes(gltfMeshes, numMeshes);
 
