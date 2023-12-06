@@ -67,6 +67,10 @@ typedef struct gltfNode {
     int m_CameraIndex;
     int m_SkinIndex;
 
+    glm::vec3 translation;
+    glm::quat rotation;
+    glm::vec3 scale;
+
     int m_NumChildren;
     int* m_ChildrenIndexes;
 } gltfNode;
@@ -289,6 +293,8 @@ typedef struct g_Model {
     int m_NumMeshes;
     g_Mesh* m_Meshes;
 } g_Model;
+
+
 
 
 #endif // !1

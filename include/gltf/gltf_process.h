@@ -665,6 +665,51 @@ gltfNode gltf_process_node(cJSON* node)
         gltf_node.m_CameraIndex = -1;
     }
 
+    if (cJSON_GetObjectItem(node, "camera")) {
+        gltf_node.m_CameraIndex = cJSON_GetObjectItem(node, "camera")->valueint;
+    } else {
+        gltf_node.m_CameraIndex = -1;
+    }
+
+
+    if (cJSON_GetObjectItem(node, "translation")) {
+        cJSON* translation = cJSON_GetObjectItem(node, "translation");
+
+        gltf_node.translation.x = cJSON_GetArrayItem(translation, 0)->valuedouble;
+        gltf_node.translation.y = cJSON_GetArrayItem(translation, 1)->valuedouble;
+        gltf_node.translation.z = cJSON_GetArrayItem(translation, 2)->valuedouble;
+
+    } else {
+        gltf_node.translation = glm::vec3(0.0f);
+    }
+
+    if (cJSON_GetObjectItem(node, "rotation")) {
+        cJSON* rotation = cJSON_GetObjectItem(node, "rotation");
+
+        gltf_node.rotation.x = cJSON_GetArrayItem(rotation, 0)->valuedouble;
+        gltf_node.rotation.y = cJSON_GetArrayItem(rotation, 1)->valuedouble;
+        gltf_node.rotation.z = cJSON_GetArrayItem(rotation, 2)->valuedouble;
+        gltf_node.rotation.w = cJSON_GetArrayItem(rotation, 3)->valuedouble;
+
+    } else {
+        gltf_node.rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+    }
+
+    if (cJSON_GetObjectItem(node, "scale")) {
+        cJSON* scale = cJSON_GetObjectItem(node, "scale");
+
+        gltf_node.scale.x = cJSON_GetArrayItem(scale, 0)->valuedouble;
+        gltf_node.scale.y = cJSON_GetArrayItem(scale, 1)->valuedouble;
+        gltf_node.scale.z = cJSON_GetArrayItem(scale, 2)->valuedouble;
+
+    } else {
+        gltf_node.scale = glm::vec3(0.0f);
+    }
+
+
+
+
+
     if (cJSON_GetObjectItem(node, "skin")) {
         gltf_node.m_SkinIndex = cJSON_GetObjectItem(node, "skin")->valueint;
     } else {

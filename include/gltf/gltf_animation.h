@@ -10,98 +10,161 @@ animation, skeletons
 
 #include "gltf/gltf_structures.h"
 
-typedef struct KeyframePosition {
-    float m_Time;
-    glm::vec3 m_Position;
-} KeyframePosition;
 
-typedef struct KeyframeRotation {
-    float m_Time;
-    glm::quat m_Rotation;
-} KeyframeRotation;
+typedef enum {
+    STEP,
+    LINEAR,
+    CUBICSPLINE
+} Interpolation;
 
-typedef struct KeyframeScale {
-    float m_Time;
-    glm::vec3 Scale;
-};
+typedef enum {
+    Translation,
+    Rotation,
+    Scale
+} Path;
 
-typedef struct Channel {
+typedef struct {
+    uint8_t path;
 
-	int m_NodeIndex;
-	
-	int m_NumKeyframePosition;
-    KeyframePosition* m_KeyframePositions;
-
-	int m_NumKeyframeRotations;
-    KeyframeRotation* m_KeyframeRotations;
-
-	int m_NumKeyframeScales;
-    KeyframeScale* m_KeyframeScales;
+    int samplerIndex;
+    int nodeIndex;
 } Channel;
 
-typedef struct Node {
-    float m_Translation[3];
-    float m_Rotation[4];
-    float m_Scale[3];
+typedef struct {
+    uint8_t interpolation;
 
-    int m_MeshIndex;
-    int m_BoneId;
+    int numKeyFrames;
+    float* timeStamps;
+    glm::vec4* keyFrames;
+} Sampler;
 
-    int m_NumChildren;
-    Node* m_Children;
-} Node;
+typedef struct {
+    glm::vec4 in_tangent;
+    glm::vec4 keyframe;
+    glm::vec4 out_tangent;
+} CubicKeyFrame;
 
-typedef struct Animation {
-	
-	char m_Name[256];
+typedef struct {
+    int numChannels;
+    Channel* channels;
 
-	int m_NumChannels;
-    Channel* m_Channels;
+    int numSamplers;
+    Sampler* samplers;
+
 } Animation;
 
-typedef struct Skin {
-    char m_Name[256];
+typedef struct {
+    char name[32];
+    int id;
 
-    int m_NumJoints;
+    int numChildren;
+    Node* children;
+} Node;
 
-    int* m_Joints;
-    glm::mat4* m_InverseBindMatrices;
-} Skin;
+Channel* channels;
 
-typedef struct gltfSceneNode {
+void apply_transformation(glm::mat4* matrix, glm::vec4 keyframe, Path path)
+{
+    switch (path) {
+    case Translation: {
+        (*matrix) = glm::translate((*matrix), glm::vec3(keyframe.x, keyframe.y, keyframe.x));
+    } break;
 
-} gltfSceneNode;
+    case Rotation: {
 
+    } break;
 
-glm::mat4 GetNodeMatrix(Node node) {
-    
-    glm::mat4 matrix;
-    
-    return matrix;
+    case Scale: {
+        (*matrix) = glm::scale((*matrix), glm::vec3(keyframe.x, keyframe.y, keyframe.x));
+    } break;
+
+    default:
+        break;
+    }
+}
+
+void interpolate_linear(glm::mat4* matrix, glm::vec4 keyframe, glm::vec4 keyframe_next, Path path)
+{
+}
+
+void interpolate_cubic(glm::mat4* matrix, CubicKeyFrame keyframe, CubicKeyFrame keyframe_next, Path path)
+{
 }
 
 /*
-void TraverseNode(Animation animation, Node node, glm::mat4* FinalBoneMatrix, glm::mat4 parentTransform)
+
+glm::mat4 getBoneTransform(int nodeId, float currentTime, Animation animation)
 {
-    glm::mat4 nodeTransform = GetNodeMatrix(node);
+    glm::mat4 boneTransform = glm::mat4(1.0f);
 
-    if (node.m_BoneId >= 0) {
-        nodeTransform = FindBoneAndGetTransform(animation, node.m_NodeName, m_CurrentTime);
-        glm::mat4 finalBoneMatrix = parentTransform * nodeTransform * node.m_Offset;
-        FinalBoneMatrix[node.m_BoneId] = finalBoneMatrix;
-    }
+    int i;
+    for (i = 0; i < animation.numChannels; ++i) {
+        Channel channel = animation.channels[i];
 
-    glm::mat4 globalTransformation = parentTransform * nodeTransform;
+        if (channel.nodeIndex = nodeId) {
+            Sampler sampler = animation.samplers[channel.samplerIndex];
 
-    if (node.m_MeshIndex >= 0) {
-       // draw mesh
-        //gltf_draw_mesh(int meshIndex, mat4 matrix);
-    }
+            switch (sampler.interpolation) {
+            case STEP: {
+                glm::vec4 keyframe = sampler.keyFrames[keyframeIndex];
 
-    for (int i = 0; i < node.m_NumChildren; ++i) {
-        TraverseNode(animation, node.m_Children[i], FinalBoneMatrix, globalTransformation);
+                apply_transformation(boneTransform, keyframe, channel.path)
+            } break;
+
+            case LINEAR: {
+                Vector4D keyframe_curr = sampler.keyFrames[keyframeIndex];
+                Vector4D keyframe_next = sampler.keyFrames[(keyframeIndex + 1) % sampler.numKeyFrames];
+
+                interpolate_linear();
+            } break;
+
+            case CUBICSPLINE: {
+                /* size of keyframes = 3 * numKeyframes
+
+                Keyframe keyFrame_in = sampler.keyFrames[(keyframeIndex - 1) % sampler.numKeyFrames];
+                Keyframe keyFrame_out = sampler.keyFrames[(keyframeIndex + 1) % sampler.numKeyFrames];
+
+                interpolate_cubic();
+            } break;
+
+            default:
+                break
+            }
+        }
     }
 }
+   */ /*
+
+void mark_joint_nodes(Node* nodes, int* joints, int numJoints)
+{
+    int i;
+    for (i = 0; i < numJoints; ++i) {
+        nodes[joints[i]].id = joints[i];
+    }
+}
+
+void transform_node(Node* node, glm::mat4 parentTransform)
+{
+    glm::mat4 globalTransform;
+
+    if (node->id >= 0) {
+        glm::mat4 inverseBindMatrix = inverseBindMatrices[node->id];
+        glm::mat4 boneTransform = getBoneTransform(node->id);
+
+        globalTransform = boneTransform * parentTransform * inverseBindMatrix;
+
+        FinalBoneMatrix[node->id] = globalTransform;
+
+    } else {
+        globalTransform = node->transform * parentTransform;
+    }
+
+    int i;
+    for (i = 0; i < node->numChildren; ++i) {
+        transform_node(node->children[i], globalTransform);
+    }
+}
+
 */
 
 #endif

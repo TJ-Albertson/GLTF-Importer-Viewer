@@ -175,88 +175,6 @@ void ProcessInput(GLFWwindow* window, Camera* camera, glm::vec3& velocity, float
 
 }
 
-unsigned int genSphereVAO(unsigned int& indexCount)
-{
-    unsigned int sphereVAO;
-
-    glGenVertexArrays(1, &sphereVAO);
-
-    unsigned int vbo, ebo;
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
-
-    std::vector<glm::vec3> positions;
-    std::vector<glm::vec2> uv;
-    std::vector<glm::vec3> normals;
-    std::vector<unsigned int> indices;
-
-    const unsigned int X_SEGMENTS = 64;
-    const unsigned int Y_SEGMENTS = 64;
-    const float PI = 3.14159265359f;
-    for (unsigned int x = 0; x <= X_SEGMENTS; ++x) {
-        for (unsigned int y = 0; y <= Y_SEGMENTS; ++y) {
-            float xSegment = (float)x / (float)X_SEGMENTS;
-            float ySegment = (float)y / (float)Y_SEGMENTS;
-            float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-            float yPos = std::cos(ySegment * PI);
-            float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-
-            positions.push_back(glm::vec3(xPos, yPos, zPos));
-            uv.push_back(glm::vec2(xSegment, ySegment));
-            normals.push_back(glm::vec3(xPos, yPos, zPos));
-        }
-    }
-
-    bool oddRow = false;
-    for (unsigned int y = 0; y < Y_SEGMENTS; ++y) {
-        if (!oddRow) // even rows: y == 0, y == 2; and so on
-        {
-            for (unsigned int x = 0; x <= X_SEGMENTS; ++x) {
-                indices.push_back(y * (X_SEGMENTS + 1) + x);
-                indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-            }
-        } else {
-            for (int x = X_SEGMENTS; x >= 0; --x) {
-                indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-                indices.push_back(y * (X_SEGMENTS + 1) + x);
-            }
-        }
-        oddRow = !oddRow;
-    }
-    indexCount = static_cast<unsigned int>(indices.size());
-
-    std::vector<float> data;
-    for (unsigned int i = 0; i < positions.size(); ++i) {
-        data.push_back(positions[i].x);
-        data.push_back(positions[i].y);
-        data.push_back(positions[i].z);
-        if (normals.size() > 0) {
-            data.push_back(normals[i].x);
-            data.push_back(normals[i].y);
-            data.push_back(normals[i].z);
-        }
-        if (uv.size() > 0) {
-            data.push_back(uv[i].x);
-            data.push_back(uv[i].y);
-        }
-    }
-    glBindVertexArray(sphereVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-    unsigned int stride = (3 + 2 + 3) * sizeof(float);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
-
-    return sphereVAO;
-}
-
-
 int main()
 {
 
@@ -268,8 +186,8 @@ int main()
     // LoadGLTF("C:/Users/tjalb/OneDrive/Documents/assets/gltf/cube3.gltf");
 
     g_Model gltf_model;
-    gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
-    //gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/anim_test.gltf", gltf_model);
+   // gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
+    gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/anim_test.gltf", gltf_model);
 
    // return 1;
 
@@ -310,13 +228,6 @@ int main()
 
 
     glm::vec3 zeroVector = glm::vec3(0.0f);
-
-
-    unsigned int indexCount = -1;
-    unsigned int sphereVAO = genSphereVAO(indexCount);
-
-    assert(sphereVAO > 0);
-    assert(indexCount > 0);
 
     while (!glfwWindowShouldClose(window)) {
 
@@ -362,8 +273,7 @@ int main()
                 model = glm::translate(model, glm::vec3((float)(col - (nrColumns / 2)) * spacing, (float)(row - (nrRows / 2)) * spacing, 0.0f));
                 setShaderMat4(pbrShader, "model", model);
                 setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-                gltf_draw_mesh(sphereVAO, gltf_model.m_Materials[0], indexCount, pbrShader);
-                //gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
+                gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
             }
         }
 
@@ -379,8 +289,8 @@ int main()
             model = glm::scale(model, glm::vec3(0.5f));
             setShaderMat4(pbrShader, "model", model);
             setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-            glBindVertexArray(sphereVAO);
-            glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(gltf_model.m_Meshes[0].m_VAO);
+            glDrawElements(GL_TRIANGLE_STRIP, gltf_model.m_Meshes[0].m_NumIndices, GL_UNSIGNED_INT, 0);
         }
 
         DrawSkybox(*playerCamera, view, projection, currentTime);
