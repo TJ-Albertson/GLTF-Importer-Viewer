@@ -83,6 +83,19 @@ void apply_transformation(glm::mat4* matrix, glm::vec4 keyframe, Path path)
     }
 }
 
+float getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+{
+    float scaleFactor = 0.0f;
+
+    float midWayLength = animationTime - lastTimeStamp;
+
+    float framesDiff = nextTimeStamp - lastTimeStamp;
+
+    scaleFactor = midWayLength / framesDiff;
+
+    return scaleFactor;
+}
+
 void interpolate_linear(glm::mat4* matrix, glm::vec4 keyframe, glm::vec4 keyframe_next, Path path)
 {
 }
@@ -91,38 +104,72 @@ void interpolate_cubic(glm::mat4* matrix, CubicKeyFrame keyframe, CubicKeyFrame 
 {
 }
 
-/*
+Path getPath(int path)
+{
+    switch (path) {
+    case 0:
+        return Translation;
+    
+    case 1:
+        return Rotation;
 
-glm::mat4 getBoneTransform(int nodeId, float currentTime, Animation animation)
+    case 2:
+        return Scale;
+
+    default:
+        break;
+    }
+}
+
+glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation)
 {
     glm::mat4 boneTransform = glm::mat4(1.0f);
 
     int i;
-    for (i = 0; i < animation.numChannels; ++i) {
+    for (i = 0; i < animation.numChannels; ++i) 
+    {
         Channel channel = animation.channels[i];
 
-        if (channel.nodeIndex = nodeId) {
+        if (channel.nodeIndex = nodeIndex) 
+        {
             Sampler sampler = animation.samplers[channel.samplerIndex];
+
+            int keyframeIndex = 0;
+
+            int j;
+            for (j = 0; j < sampler.numKeyFrames - 1; ++j)
+            {
+                if (currentTime < sampler.timeStamps[j + 1])
+                    keyframeIndex = j;
+            }
 
             switch (sampler.interpolation) {
             case STEP: {
                 glm::vec4 keyframe = sampler.keyFrames[keyframeIndex];
 
-                apply_transformation(boneTransform, keyframe, channel.path)
+                Path path = getPath(channel.path);
+
+                apply_transformation(&boneTransform, keyframe, path);
             } break;
 
             case LINEAR: {
-                Vector4D keyframe_curr = sampler.keyFrames[keyframeIndex];
-                Vector4D keyframe_next = sampler.keyFrames[(keyframeIndex + 1) % sampler.numKeyFrames];
+                glm::vec4 keyframe_curr = sampler.keyFrames[keyframeIndex];
+                glm::vec4 keyframe_next = sampler.keyFrames[(keyframeIndex + 1) % sampler.numKeyFrames];
 
-                interpolate_linear();
+                float timestamp_curr = sampler.timeStamps[keyframeIndex];
+                float timestamp_next = sampler.timeStamps[keyframeIndex];
+                float scaleFactor = getScaleFactor(timestamp_curr, timestamp_next, currentTime);
+
+                Path path = getPath(channel.path);
+
+                interpolate_linear(&boneTransform, keyframe_curr, keyframe_next, path);
             } break;
 
             case CUBICSPLINE: {
-                /* size of keyframes = 3 * numKeyframes
+                /* size of keyframes = 3 * numKeyframes */
 
-                Keyframe keyFrame_in = sampler.keyFrames[(keyframeIndex - 1) % sampler.numKeyFrames];
-                Keyframe keyFrame_out = sampler.keyFrames[(keyframeIndex + 1) % sampler.numKeyFrames];
+                glm::vec4 keyFrame_in = sampler.keyFrames[(keyframeIndex - 1) % sampler.numKeyFrames];
+                glm::vec4 keyFrame_out = sampler.keyFrames[(keyframeIndex + 1) % sampler.numKeyFrames];
 
                 interpolate_cubic();
             } break;
@@ -133,7 +180,7 @@ glm::mat4 getBoneTransform(int nodeId, float currentTime, Animation animation)
         }
     }
 }
-   */ /*
+/*
 
 void mark_joint_nodes(Node* nodes, int* joints, int numJoints)
 {

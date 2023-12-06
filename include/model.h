@@ -122,7 +122,7 @@ void DrawModelNode(Node* nodes, Node node, glm::mat4 parentTransform, unsigned i
 
     if (node.jointIndex >= 0) {
         glm::mat4 inverseBindMatrix = inverseBindMatrices[node.jointIndex];
-        glm::mat4 boneTransform = getBoneTransform(node.jointIndex);
+        glm::mat4 boneTransform = getBoneTransform(node.nodeIndex);
 
         globalTransform = boneTransform * parentTransform * inverseBindMatrix;
 
