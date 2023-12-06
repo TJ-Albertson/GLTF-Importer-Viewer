@@ -18,6 +18,8 @@ Functions:
 
 #include <gltf/gltf_structures.h>
 
+#include <gltf/gltf_animation.h>
+
 #include <gltf/gltf_gl.h>
 #include <shader_m.h>
 
@@ -33,19 +35,7 @@ typedef struct Mesh {
     Primitive* primitives;
 } Mesh;
 
-typedef struct {
 
-    int meshIndex;
-    int jointIndex;
-    int nodeIndex;
-
-    glm::vec3 translation;
-    glm::quat rotation;
-    glm::vec3 scale;
-
-    int numChildren;
-    int* childrenIndices;
-} Node;
 
 typedef struct {
     int numRootNodes;

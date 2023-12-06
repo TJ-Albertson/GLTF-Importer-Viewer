@@ -41,12 +41,6 @@ typedef struct {
 } Sampler;
 
 typedef struct {
-    glm::vec4 in_tangent;
-    glm::vec4 keyframe;
-    glm::vec4 out_tangent;
-} CubicKeyFrame;
-
-typedef struct {
     int numChannels;
     Channel* channels;
 
@@ -55,14 +49,28 @@ typedef struct {
 
 } Animation;
 
+typedef struct {
+    glm::vec4 in_tangent;
+    glm::vec4 keyframe;
+    glm::vec4 out_tangent;
+} CubicKeyFrame;
+
 
 typedef struct {
-    char name[32];
-    int id;
+
+    int meshIndex;
+    int jointIndex;
+    int nodeIndex;
+
+    glm::vec3 translation;
+    glm::quat rotation;
+    glm::vec3 scale;
 
     int numChildren;
-    Node* children;
+    int* childrenIndices;
 } Node;
+
+
 
 Channel* channels;
 
@@ -250,11 +258,17 @@ Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccesso
 {
     Animation animation;
 
-    animation.numChannels = gltf_animation.m_NumChannels;
-    animation.numSamplers = gltf_animation.m_NumSamplers;
+    int numChannels = gltf_animation.m_NumChannels;
+    int numSamplers = gltf_animation.m_NumSamplers;
+
+    animation.numChannels = numChannels;
+    animation.numSamplers = numSamplers;
+
+    animation.channels = (Channel*)malloc(numChannels * sizeof(Channel));
+    animation.samplers = (Sampler*)malloc(numSamplers * sizeof(Sampler));
 
     int i;
-    for (i = 0; i < gltf_animation.m_NumChannels; ++i)
+    for (i = 0; i < numChannels; ++i)
     {
         gltfChannel gltf_channel = gltf_animation.m_Channels[i];
 
@@ -271,7 +285,7 @@ Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccesso
         animation.channels[i].nodeIndex = gltf_channel.m_Target.m_NodeIndex;
     }
 
-    for (i = 0; i < gltf_animation.m_NumSamplers; ++i) {
+    for (i = 0; i < numSamplers; ++i) {
         gltfAnimationSampler gltf_sampler = gltf_animation.m_Samplers[i];
 
         if (strcmp(gltf_sampler.m_Interpolation, "STEP") == 0)
@@ -300,13 +314,13 @@ Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccesso
         
         Buffer output_buffer = getBuffer(gltf_sampler.m_Output, gltfAccessors, gltfBufferViews, allocatedBuffers);
         
-        animation.samplers[i].keyFrames = (glm::vec4*)malloc(numKeyframes * sizeof(glm::vec4));
+        animation.samplers[i].keyFrames = (glm::vec4*)malloc(output_buffer.count * sizeof(glm::vec4));
 
         int size = gltf_get_size(gltfAccessors[gltf_sampler.m_Output].m_Type);
 
         if (size == 3)
         {
-            for (int k = 0; k < numKeyframes; ++k) {
+            for (int k = 0; k < output_buffer.count; ++k) {
                 float x, y, z;
                 memcpy(&x, output_buffer.data + k * output_buffer.componentSize, output_buffer.componentSize);
                 memcpy(&y, output_buffer.data + k * output_buffer.componentSize + 4, output_buffer.componentSize);
@@ -318,7 +332,7 @@ Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccesso
                 animation.samplers[i].keyFrames[k].w = 0.0f;
             }
         } else /* size == 4 */ {
-            for (int k = 0; k < numKeyframes; ++k) {
+            for (int k = 0; k < output_buffer.count; ++k) {
                 float x, y, z, w;
                 memcpy(&x, output_buffer.data + k * output_buffer.componentSize, output_buffer.componentSize);
                 memcpy(&y, output_buffer.data + k * output_buffer.componentSize + 4, output_buffer.componentSize);
@@ -331,16 +345,56 @@ Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccesso
                 animation.samplers[i].keyFrames[k].w = w;
             }
         }
+    }
 
-        
-        
+    return animation;
+}
+
+
+void printChannel(Channel* channel)
+{
+    printf("Channel:\n");
+    printf("  Path: %u\n", channel->path);
+    printf("  Sampler Index: %d\n", channel->samplerIndex);
+    printf("  Node Index: %d\n", channel->nodeIndex);
+}
+
+void printSampler(Sampler* sampler)
+{
+    printf("Sampler:\n");
+    printf("  Interpolation: %u\n", sampler->interpolation);
+    printf("  Number of Key Frames: %d\n", sampler->numKeyFrames);
+
+    printf("  Time Stamps:\n");
+    for (int i = 0; i < sampler->numKeyFrames; ++i) {
+        printf("    %f\n", sampler->timeStamps[i]);
+    }
+
+    printf("  Key Frames:\n");
+    int keyFrameSize = (sampler->interpolation == 2) ? 3 : 1;
+
+    for (int i = 0; i < sampler->numKeyFrames; ++i) {
+        // Assuming glm::vec4 has x, y, z, and w components
+        for (int j = 0; j < keyFrameSize; ++j) {
+            printf("    (%f, %f, %f, %f)\n", sampler->keyFrames[i * keyFrameSize + j].x, sampler->keyFrames[i * keyFrameSize + j].y, sampler->keyFrames[i * keyFrameSize + j].z, sampler->keyFrames[i * keyFrameSize + j].w);
+        }
     }
 }
 
 
+void printAnimation(Animation* animation)
+{
+    printf("Animation:\n");
+    printf("Number of Channels: %d\n", animation->numChannels);
+    for (int i = 0; i < animation->numChannels; ++i) {
+        printChannel(&animation->channels[i]);
+    }
 
-
-
+    printf("Number of Samplers: %d\n", animation->numSamplers);
+    for (int i = 0; i < animation->numSamplers; ++i) {
+        printSampler(&animation->samplers[i]);
+    }
+}
 
 
 

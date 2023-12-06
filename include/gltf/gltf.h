@@ -19,6 +19,7 @@ gltf file importer
 #include "gltf/gltf_print.h"
 #include "gltf/gltf_process.h"
 #include "gltf/gltf_structures.h"
+#include "gltf/gltf_animation.h"
 
 char* gltf_load_file(const char* filename)
 {
@@ -300,6 +301,13 @@ int gltf_parse(const char* jsonString, g_Model& model)
     for (int i = 0; i < numMeshes; ++i) {
         model.m_Meshes[i] = gltf_load_mesh(gltfMeshes[i], gltfAccessors, gltfBufferViews, allocatedBuffers);
     }
+
+    if (numAnimations > 0) {
+        Animation animation = load_animation(gltfAnimations[0], gltfAccessors, gltfBufferViews, allocatedBuffers);
+
+        printAnimation(&animation);
+    }
+    
 
     
 
