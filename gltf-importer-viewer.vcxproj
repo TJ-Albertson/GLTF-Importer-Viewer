@@ -162,6 +162,8 @@
     <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\shaders\animation\animation.fs" />
+    <None Include="resources\shaders\animation\animation.vs" />
     <None Include="resources\shaders\pbr\pbr.fs" />
     <None Include="resources\shaders\pbr\pbr.vs" />
   </ItemGroup>

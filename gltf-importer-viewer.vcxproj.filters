@@ -112,5 +112,11 @@
     <None Include="resources\shaders\pbr\pbr.vs">
       <Filter>Resource Files\shaders</Filter>
     </None>
+    <None Include="resources\shaders\animation\animation.fs">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="resources\shaders\animation\animation.vs">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
