@@ -320,29 +320,31 @@ Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccesso
 
         if (size == 3)
         {
-            for (int k = 0; k < output_buffer.count; ++k) {
-                float x, y, z;
-                memcpy(&x, output_buffer.data + k * output_buffer.componentSize, output_buffer.componentSize);
-                memcpy(&y, output_buffer.data + k * output_buffer.componentSize + 4, output_buffer.componentSize);
-                memcpy(&z, output_buffer.data + k * output_buffer.componentSize + 8, output_buffer.componentSize);
-                
-                animation.samplers[i].keyFrames[k].x = x;
-                animation.samplers[i].keyFrames[k].y = y;
-                animation.samplers[i].keyFrames[k].z = z;
-                animation.samplers[i].keyFrames[k].w = 0.0f;
-            }
-        } else /* size == 4 */ {
-            for (int k = 0; k < output_buffer.count; ++k) {
-                float x, y, z, w;
-                memcpy(&x, output_buffer.data + k * output_buffer.componentSize, output_buffer.componentSize);
-                memcpy(&y, output_buffer.data + k * output_buffer.componentSize + 4, output_buffer.componentSize);
-                memcpy(&z, output_buffer.data + k * output_buffer.componentSize + 8, output_buffer.componentSize);
-                memcpy(&w, output_buffer.data + k * output_buffer.componentSize + 12, output_buffer.componentSize);
+            int count = 0;
+            for (int j = 0; j < output_buffer.count; j++) 
+            {
+                for (int k = 0; k < size; k++)
+                {
+                    float f;
+                    memcpy(&f, output_buffer.data + count * 4, 4);
+                    animation.samplers[i].keyFrames[j][k] = f;
 
-                animation.samplers[i].keyFrames[k].x = x;
-                animation.samplers[i].keyFrames[k].y = y;
-                animation.samplers[i].keyFrames[k].z = z;
-                animation.samplers[i].keyFrames[k].w = w;
+                    count++;
+                }
+
+                animation.samplers[i].keyFrames[j][3] = 0.0f;
+            }
+
+        } else /* size == 4 */ {
+            int count = 0;
+            for (int j = 0; j < output_buffer.count; j++) {
+                for (int k = 0; k < size; k++) {
+                    float f;
+                    memcpy(&f, output_buffer.data + count * 4, 4);
+                    animation.samplers[i].keyFrames[j][k] = f;
+
+                    count++;
+                }
             }
         }
     }
@@ -373,12 +375,21 @@ void printSampler(Sampler* sampler)
     printf("  Key Frames:\n");
     int keyFrameSize = (sampler->interpolation == 2) ? 3 : 1;
 
-    for (int i = 0; i < sampler->numKeyFrames; ++i) {
-        // Assuming glm::vec4 has x, y, z, and w components
-        for (int j = 0; j < keyFrameSize; ++j) {
-            printf("    (%f, %f, %f, %f)\n", sampler->keyFrames[i * keyFrameSize + j].x, sampler->keyFrames[i * keyFrameSize + j].y, sampler->keyFrames[i * keyFrameSize + j].z, sampler->keyFrames[i * keyFrameSize + j].w);
+    if (keyFrameSize == 3)
+    {
+        for (int i = 0; i < sampler->numKeyFrames; ++i) {
+            // Assuming glm::vec4 has x, y, z, and w components
+            for (int j = 0; j < keyFrameSize; ++j) {
+                printf("    (%f, %f, %f, %f)\n", sampler->keyFrames[i * keyFrameSize + j].x, sampler->keyFrames[i * keyFrameSize + j].y, sampler->keyFrames[i * keyFrameSize + j].z, sampler->keyFrames[i * keyFrameSize + j].w);
+            }
+        }
+    } else {
+        for (int i = 0; i < sampler->numKeyFrames; ++i) 
+        { 
+            printf("    (%f, %f, %f, %f)\n", sampler->keyFrames[i].x, sampler->keyFrames[i].y, sampler->keyFrames[i].z, sampler->keyFrames[i].w);
         }
     }
+    
 }
 
 

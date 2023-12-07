@@ -189,6 +189,7 @@ int main()
    // gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
     gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/cube.gltf", gltf_model);
 
+ 
    // return 1;
 
     selectedMaterial = gltf_model.m_Materials[0];
