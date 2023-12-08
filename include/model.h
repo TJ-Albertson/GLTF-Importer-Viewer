@@ -17,44 +17,18 @@ Functions:
 #include <glm/gtx/quaternion.hpp>
 
 #include <gltf/gltf_structures.h>
-
 #include <gltf/gltf_animation.h>
 
 #include <gltf/gltf_gl.h>
 #include <shader_m.h>
 
-typedef struct {
-    unsigned int m_VAO;
-    int m_NumIndices;
 
-    unsigned int materialIndex;
-} Primitive;
-
-typedef struct Mesh {
-    int numPrimitives;
-    Primitive* primitives;
-} Mesh;
-
-
-
-typedef struct {
-    int numRootNodes;
-    int* rootNodeIndices;
-
-    Node* nodes;
-
-    int numMaterials;
-    Material* materials;
-
-    int numMeshes;
-    Mesh* meshes;
-} Model;
 
 glm::mat4* FinalBoneMatrices;
 glm::mat4* inverseBindMatrices;
 
 
-void create_nodes(gltfNode* gltf_nodes, int numNodes)
+Node* create_nodes(gltfNode* gltf_nodes, int numNodes)
 {
     Node* nodes = (Node*)malloc(numNodes * sizeof(Node));
 
@@ -84,6 +58,8 @@ void create_nodes(gltfNode* gltf_nodes, int numNodes)
         }
     }
 
+
+    return nodes;
 }
 
 void mark_joint_nodes(Node* nodes, int* joints, int numJoints)

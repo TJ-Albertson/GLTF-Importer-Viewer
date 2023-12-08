@@ -185,14 +185,14 @@ int main()
      */
     // LoadGLTF("C:/Users/tjalb/OneDrive/Documents/assets/gltf/cube3.gltf");
 
-    g_Model gltf_model;
+    Model gltf_model;
    // gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
     gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/cube.gltf", gltf_model);
 
     printAnimation(&globalAnimation);
    // return 1;
 
-    selectedMaterial = gltf_model.m_Materials[0];
+    selectedMaterial = gltf_model.materials[0];
 
     // unsigned int VAO = gltf_LoadMeshVertexData(testMesh.vertices, testMesh.indices, testMesh.numVertices, testMesh.numIndices);
 
@@ -268,6 +268,8 @@ int main()
         setShaderMat4(animShader, "projection", projection);
         setShaderMat4(animShader, "view", view);
 
+        for (int i = 0; i < gltf_model.skin.numJoints; ++i)
+            setShaderMat4(animShader, "finalBonesMatrices[" + std::to_string(i) + "]", gltf_model.skin.finalBoneMatrices[i]);
 
 
 
@@ -283,7 +285,8 @@ int main()
                 model = glm::translate(model, glm::vec3((float)(col - (nrColumns / 2)) * spacing, (float)(row - (nrRows / 2)) * spacing, 0.0f));
                 setShaderMat4(pbrShader, "model", model);
                 setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-                //gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
+
+                gltf_draw_mesh(pbrShader, gltf_model.meshes[0], gltf_model.materials);
             }
         }
 
@@ -299,7 +302,7 @@ int main()
             model = glm::scale(model, glm::vec3(0.5f));
             setShaderMat4(pbrShader, "model", model);
             setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-            glBindVertexArray(gltf_model.m_Meshes[0].m_VAO);
+            //glBindVertexArray(gltf_model.m_Meshes[0].m_VAO);
             //glDrawElements(GL_TRIANGLE_STRIP, gltf_model.m_Meshes[0].m_NumIndices, GL_UNSIGNED_INT, 0);
         }
 

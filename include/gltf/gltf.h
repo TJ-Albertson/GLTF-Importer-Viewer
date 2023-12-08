@@ -21,6 +21,8 @@ gltf file importer
 #include "gltf/gltf_structures.h"
 #include "gltf/gltf_animation.h"
 
+#include <model.h>
+
 char* gltf_load_file(const char* filename)
 {
     FILE* file = fopen(filename, "r");
@@ -84,7 +86,7 @@ void gltf_pre_check(cJSON* root)
     }
 }
 
-int gltf_parse(const char* jsonString, g_Model& model)
+int gltf_parse(const char* jsonString, Model& model)
 {
     cJSON* root = cJSON_Parse(jsonString);
     if (!root) {
@@ -287,19 +289,43 @@ int gltf_parse(const char* jsonString, g_Model& model)
     }
 
     // Loading Meshes/Materials
-    model.m_NumMeshes = numMeshes;
-    model.m_NumMaterials = numMaterials;
+    model.numMeshes = numMeshes;
+    model.numMaterials = numMaterials;
+    model.numAnimations = numAnimations;
+    model.numRootNodes = numRootNodes;
 
-    model.m_Meshes = (g_Mesh*)malloc(numMeshes * sizeof(g_Mesh));
-    model.m_Materials = (Material*)malloc(numMaterials * sizeof(Material));
-    model.m_Scene = gltf_scene;
+    model.meshes = (Mesh*)malloc(numMeshes * sizeof(Mesh));
+    model.materials = (Material*)malloc(numMaterials * sizeof(Material));
+    model.animations = (Animation*)malloc(numAnimations * sizeof(Animation));
+
+    //model.nodes = (Node*)malloc(numNodes * sizeof(Node));
+    model.nodes = create_nodes(gltfNodes, numNodes);
+
+    int numJoints = gltfSkins[0].m_NumJoints;
+
+    mark_joint_nodes(model.nodes, gltfSkins[0].m_Joints, numJoints);
+
+    model.skin.numJoints = numJoints;
+    model.skin.finalBoneMatrices = (glm::mat4*)malloc(numJoints * sizeof(glm::mat4));
+    model.skin.inverseBindMatrices = (glm::mat4*)malloc(numJoints * sizeof(glm::mat4));
+
+    for (int i = 0; i < numJoints; ++i)
+    {
+        model.skin.inverseBindMatrices[i] = gltfSkins[0].m_InverseBindMatrices[i];
+    }
+
 
     for (int i = 0; i < numMaterials; ++i) {
-        model.m_Materials[i] = gltf_load_material(gltfMaterials[i], gltfImages, gltfSamplers, gltfTextures);
+        model.materials[i] = gltf_load_material(gltfMaterials[i], gltfImages, gltfSamplers, gltfTextures);
     }
 
     for (int i = 0; i < numMeshes; ++i) {
-        model.m_Meshes[i] = gltf_load_mesh(gltfMeshes[i], gltfAccessors, gltfBufferViews, allocatedBuffers);
+        model.meshes[i] = gltf_load_mesh(gltfMeshes[i], gltfAccessors, gltfBufferViews, allocatedBuffers);
+    }
+
+    for (int i = 0; i < numAnimations; ++i)
+    {
+        model.animations[i] = load_animation(gltfAnimations[i], gltfAccessors, gltfBufferViews, allocatedBuffers);
     }
 
     if (numAnimations > 0) {
@@ -328,7 +354,7 @@ int gltf_parse(const char* jsonString, g_Model& model)
     return 1;
 }
 
-int gltf_load_model(const char* filename, g_Model& model)
+int gltf_load_model(const char* filename, Model& model)
 {
     char* jsonString = gltf_load_file(filename);
 

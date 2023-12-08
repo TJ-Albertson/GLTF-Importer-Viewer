@@ -13,67 +13,6 @@ animation, skeletons
 #include "gltf/gltf_structures.h"
 
 
-typedef enum {
-    STEP,
-    LINEAR,
-    CUBICSPLINE
-} Interpolation;
-
-typedef enum {
-    Translation,
-    Rotation,
-    Scale
-} Path;
-
-typedef struct {
-    uint8_t path;
-
-    int samplerIndex;
-    int nodeIndex;
-} Channel;
-
-typedef struct {
-    uint8_t interpolation;
-
-    int numKeyFrames;
-    float* timeStamps;
-    glm::vec4* keyFrames;
-} Sampler;
-
-typedef struct {
-    int numChannels;
-    Channel* channels;
-
-    int numSamplers;
-    Sampler* samplers;
-
-} Animation;
-
-typedef struct {
-    glm::vec4 in_tangent;
-    glm::vec4 keyframe;
-    glm::vec4 out_tangent;
-} CubicKeyFrame;
-
-
-typedef struct {
-
-    int meshIndex;
-    int jointIndex;
-    int nodeIndex;
-
-    glm::vec3 translation;
-    glm::quat rotation;
-    glm::vec3 scale;
-
-    int numChildren;
-    int* childrenIndices;
-} Node;
-
-
-
-Channel* channels;
-
 void apply_transformation(glm::mat4* matrix, glm::vec4 keyframe, Path path)
 {
     switch (path) {
@@ -368,6 +307,43 @@ Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccesso
     }
 
     return animation;
+}
+
+Skin load_skin(gltfSkin gltf_skin, gltfAccessor* gltfAccessors, gltfBufferView* gltfBufferViews, char** allocatedBuffers)
+{
+    Skin skin;
+
+    int numJoints = gltf_skin.m_NumJoints;
+
+    skin.numJoints = numJoints;
+    skin.finalBoneMatrices = (glm::mat4*)malloc(numJoints * sizeof(glm::mat4));
+    skin.inverseBindMatrices = (glm::mat4*)malloc(numJoints * sizeof(glm::mat4));
+
+     Buffer buffer = getBuffer(gltf_skin.m_InverseBindMatrices, gltfAccessors, gltfBufferViews, allocatedBuffers);
+
+    skin.inverseBindMatrices[i] = (glm::mat4*)malloc(buffer.count * sizeof(glm::mat4));
+
+    int size = gltf_get_size(gltfAccessors[gltf_skin.m_InverseBindMatrices].m_Type);
+
+    for (int i = 0; i < numJoints; ++i) {
+
+        int count = 0;
+        for (int j = 0; j < buffer.count; j++) {
+            for (int k = 0; k < size; k++) {
+                float f;
+                memcpy(&f, buffer.data + count * 4, 4);
+                animation.samplers[i].keyFrames[j][k] = f;
+
+                count++;
+            }
+        }
+
+
+
+        skin.inverseBindMatrices[i] = gltf_skin.m_InverseBindMatrices[i];
+    }
+
+    return skin;
 }
 
 

@@ -305,6 +305,86 @@ typedef struct gltfDraw {
     int numIndices;
 } gltfDraw;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef enum {
+    STEP,
+    LINEAR,
+    CUBICSPLINE
+} Interpolation;
+
+typedef enum {
+    Translation,
+    Rotation,
+    Scale
+} Path;
+
+typedef struct {
+    uint8_t path;
+
+    int samplerIndex;
+    int nodeIndex;
+} Channel;
+
+typedef struct {
+    uint8_t interpolation;
+
+    int numKeyFrames;
+    float* timeStamps;
+    glm::vec4* keyFrames;
+} Sampler;
+
+typedef struct {
+    int numChannels;
+    Channel* channels;
+
+    int numSamplers;
+    Sampler* samplers;
+
+} Animation;
+
+typedef struct {
+    glm::vec4 in_tangent;
+    glm::vec4 keyframe;
+    glm::vec4 out_tangent;
+} CubicKeyFrame;
+
+typedef struct {
+
+    int meshIndex;
+    int jointIndex;
+    int nodeIndex;
+
+    glm::vec3 translation;
+    glm::quat rotation;
+    glm::vec3 scale;
+
+    int numChildren;
+    int* childrenIndices;
+} Node;
+
+typedef struct {
+    int numJoints;
+    glm::mat4* inverseBindMatrices;
+    glm::mat4* finalBoneMatrices;
+} Skin;
+
+
+/*
 typedef struct g_Mesh {
     unsigned int m_VAO;
     int m_NumIndices;
@@ -319,7 +399,36 @@ typedef struct g_Model {
     int m_NumMeshes;
     g_Mesh* m_Meshes;
 } g_Model;
+*/
+typedef struct {
+    unsigned int VAO;
+    int numIndices;
 
+    unsigned int materialIndex;
+} Primitive;
+
+typedef struct {
+    int numPrimitives;
+    Primitive* primitives;
+} Mesh;
+
+typedef struct {
+    int numRootNodes;
+    int* rootNodeIndices;
+
+    int numAnimations;
+    Animation* animations;
+
+    Skin skin;
+
+    Node* nodes;
+
+    int numMaterials;
+    Material* materials;
+
+    int numMeshes;
+    Mesh* meshes;
+} Model;
 
 
 

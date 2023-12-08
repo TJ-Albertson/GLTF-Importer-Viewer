@@ -184,46 +184,59 @@ Material gltf_load_material(gltfMaterial gltf_material, gltfImage* gltf_images, 
     return material;
 }
 
-void gltf_draw_mesh(unsigned int VAO, Material material, unsigned int numIndices, unsigned int shaderID)
+void gltf_draw_mesh(unsigned int shaderID, Mesh mesh, Material* materials)
 {
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material.m_BaseColorTextureId);
+    int i;
+    for (i = 0; i < mesh.numPrimitives; ++i)
+    {
+        Primitive primitive = mesh.primitives[i];
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, material.m_NormalTextureId);
+        if (primitive.materialIndex >= 0)
 
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, material.m_MetallicTextureId);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, materials[primitive.materialIndex].m_BaseColorTextureId);
 
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, material.m_RoughnessTextureId);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, materials[primitive.materialIndex].m_NormalTextureId);
 
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, material.m_OcclusionTextureId);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, materials[primitive.materialIndex].m_MetallicTextureId);
 
-    glBindVertexArray(VAO);
-    //glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(numIndices), GL_UNSIGNED_INT, 0);
-    glDrawElements(GL_TRIANGLE_STRIP, static_cast<unsigned int>(numIndices), GL_UNSIGNED_INT, 0);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, materials[primitive.materialIndex].m_RoughnessTextureId);
 
-    glBindVertexArray(0);
-    glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, materials[primitive.materialIndex].m_OcclusionTextureId);
+
+        glBindVertexArray(primitive.VAO);
+        //glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(numIndices), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLE_STRIP, static_cast<unsigned int>(primitive.numIndices), GL_UNSIGNED_INT, 0);
+
+        glBindVertexArray(0);
+        glActiveTexture(GL_TEXTURE0);
+    }
+
+
+    
 }
 
 //TODO
-g_Mesh gltf_load_mesh(gltfMesh mesh, gltfAccessor* gltfAccessors, gltfBufferView* gltfBufferViews, char** allocatedBuffers)
+Mesh gltf_load_mesh(gltfMesh gltf_mesh, gltfAccessor* gltfAccessors, gltfBufferView* gltfBufferViews, char** allocatedBuffers)
 {
-    g_Mesh g_mesh;
+    Mesh mesh;
 
-    int numIndices;
+    int numPrimitives = gltf_mesh.m_NumPrimitives;
 
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
+    mesh.numPrimitives = numPrimitives;
+    mesh.primitives = (Primitive*)malloc(numPrimitives * sizeof(Primitive));
 
-    glBindVertexArray(VAO);
+    for (int j = 0; j < numPrimitives; ++j) {
+        gltfPrimitive gltf_primitive = gltf_mesh.m_Primitives[j];
 
-    for (int j = 0; j < mesh.m_NumPrimitives; ++j) {
-        gltfPrimitive gltf_primitive = mesh.m_Primitives[j];
-
+        int numIndices;
+        unsigned int VAO;
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
         /*
          *   Indices
          */
@@ -309,15 +322,16 @@ g_Mesh gltf_load_mesh(gltfMesh mesh, gltfAccessor* gltfAccessors, gltfBufferView
 
             gltf_bind_attribute(TANGENT, accessor, gltfBufferViews, allocatedBuffers);
         }
+
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        mesh.primitives[j].materialIndex = gltf_primitive.m_MaterialIndex;
+        mesh.primitives[j].VAO = VAO;
+        mesh.primitives[j].numIndices = numIndices;
     }
 
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    g_mesh.m_VAO = VAO;
-    g_mesh.m_NumIndices = numIndices;
-
-    return g_mesh;
+    return mesh;
 }
 
 
