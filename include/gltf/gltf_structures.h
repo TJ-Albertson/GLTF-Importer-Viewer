@@ -105,6 +105,8 @@ typedef struct gltfScene {
     char m_Name[256];
     int m_NumNodes;
     gltfNode* m_Nodes;
+
+    int* m_RootNodeIndices;
 } gltfScene;
 
 /*

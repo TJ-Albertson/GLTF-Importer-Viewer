@@ -81,17 +81,17 @@ glm::mat4 getNodeTransform(Node node)
     return localTransform;
 }
 
-void DrawModelNode(Node* nodes, Node node, glm::mat4 parentTransform, unsigned int shaderId, Animation animation)
+void DrawModelNode(unsigned int shaderId, Node* nodes, Node node, glm::mat4 parentTransform, Animation animation, Skin* skin)
 {
     glm::mat4 globalTransform;
 
     if (node.jointIndex >= 0) {
-        glm::mat4 inverseBindMatrix = inverseBindMatrices[node.jointIndex];
+        glm::mat4 inverseBindMatrix = skin->inverseBindMatrices[node.jointIndex];
         glm::mat4 boneTransform = getBoneTransform(node.nodeIndex, 0.01f, animation);
 
         globalTransform = boneTransform * parentTransform * inverseBindMatrix;
 
-        FinalBoneMatrices[node.jointIndex] = globalTransform;
+        skin->finalBoneMatrices[node.jointIndex] = globalTransform;
 
     } else {
         glm::mat4 nodeTransform = getNodeTransform(node);
@@ -99,12 +99,12 @@ void DrawModelNode(Node* nodes, Node node, glm::mat4 parentTransform, unsigned i
         globalTransform = nodeTransform * parentTransform;
     }
 
-    glUseProgram(shaderId);
-    setShaderMat4(shaderId, "model", globalTransform);
+    //glUseProgram(shaderId);
+    //setShaderMat4(shaderId, "model", globalTransform);
     
     int i;
     for (i = 0; i < node.numChildren; ++i) {
-        DrawModelNode(nodes, nodes[node.childrenIndices[i]], globalTransform, shaderId, animation);
+        DrawModelNode(shaderId, nodes, nodes[node.childrenIndices[i]], globalTransform, animation, skin);
     }
 }
 #endif

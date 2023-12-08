@@ -118,11 +118,14 @@ int gltf_parse(const char* jsonString, Model& model)
     strncpy(gltf_scene.m_Name, name->valuestring, sizeof(gltf_scene.m_Name));
     gltf_scene.m_NumNodes = numRootNodes;
     gltf_scene.m_Nodes = (gltfNode*)malloc(numRootNodes * sizeof(gltfNode));
+    gltf_scene.m_RootNodeIndices = (int*)malloc(numRootNodes * sizeof(int));
 
     cJSON* nodes = cJSON_GetObjectItem(root, "nodes");
 
     for (int i = 0; i < numRootNodes; ++i) {
         int rootNodeIndex = cJSON_GetArrayItem(rootNodeIndexes, i)->valueint;
+        gltf_scene.m_RootNodeIndices[i] = rootNodeIndex;
+
         cJSON* rootNode = cJSON_GetArrayItem(nodes, rootNodeIndex);
         gltfNode gltfNode = gltf_traverse_node(rootNode);
         gltf_scene.m_Nodes[i] = gltfNode;
@@ -299,20 +302,21 @@ int gltf_parse(const char* jsonString, Model& model)
     model.animations = (Animation*)malloc(numAnimations * sizeof(Animation));
 
     //model.nodes = (Node*)malloc(numNodes * sizeof(Node));
+    model.numRootNodes = numRootNodes;
+    model.rootNodeIndices = (int*)malloc(numRootNodes * sizeof(int));
+    for (int i = 0; i < numRootNodes; ++i) {
+        model.rootNodeIndices[i] = gltf_scene.m_RootNodeIndices[i];
+    }
+
+    
+
     model.nodes = create_nodes(gltfNodes, numNodes);
 
     int numJoints = gltfSkins[0].m_NumJoints;
 
     mark_joint_nodes(model.nodes, gltfSkins[0].m_Joints, numJoints);
 
-    model.skin.numJoints = numJoints;
-    model.skin.finalBoneMatrices = (glm::mat4*)malloc(numJoints * sizeof(glm::mat4));
-    model.skin.inverseBindMatrices = (glm::mat4*)malloc(numJoints * sizeof(glm::mat4));
-
-    for (int i = 0; i < numJoints; ++i)
-    {
-        model.skin.inverseBindMatrices[i] = gltfSkins[0].m_InverseBindMatrices[i];
-    }
+    model.skin = load_skin(gltfSkins[0], gltfAccessors, gltfBufferViews, allocatedBuffers);
 
 
     for (int i = 0; i < numMaterials; ++i) {

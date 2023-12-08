@@ -264,12 +264,24 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(playerCamera->FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, RENDER_DISTANCE);
         glm::mat4 view = GetViewMatrix(*playerCamera);
 
+        /* animation */
         glUseProgram(animShader);
         setShaderMat4(animShader, "projection", projection);
         setShaderMat4(animShader, "view", view);
 
+        glm::mat4 anim_model = glm::mat4(1.0f);
+        setShaderMat4(animShader, "model", anim_model);
+
+        for (int i = 0; i < gltf_model.numRootNodes; ++i)
+            //DrawModelNode(animShader, gltf_model.nodes, gltf_model.nodes[gltf_model.rootNodeIndices[i]], anim_model, gltf_model.animations[0], &gltf_model.skin);
+        
         for (int i = 0; i < gltf_model.skin.numJoints; ++i)
             setShaderMat4(animShader, "finalBonesMatrices[" + std::to_string(i) + "]", gltf_model.skin.finalBoneMatrices[i]);
+
+        gltf_draw_mesh(animShader, gltf_model.meshes[0], gltf_model.materials);
+        /* animation */
+
+        
 
 
 
@@ -286,7 +298,7 @@ int main()
                 setShaderMat4(pbrShader, "model", model);
                 setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
 
-                gltf_draw_mesh(pbrShader, gltf_model.meshes[0], gltf_model.materials);
+                //gltf_draw_mesh(pbrShader, gltf_model.meshes[0], gltf_model.materials);
             }
         }
 

@@ -319,28 +319,30 @@ Skin load_skin(gltfSkin gltf_skin, gltfAccessor* gltfAccessors, gltfBufferView* 
     skin.finalBoneMatrices = (glm::mat4*)malloc(numJoints * sizeof(glm::mat4));
     skin.inverseBindMatrices = (glm::mat4*)malloc(numJoints * sizeof(glm::mat4));
 
-     Buffer buffer = getBuffer(gltf_skin.m_InverseBindMatrices, gltfAccessors, gltfBufferViews, allocatedBuffers);
-
-    skin.inverseBindMatrices[i] = (glm::mat4*)malloc(buffer.count * sizeof(glm::mat4));
-
-    int size = gltf_get_size(gltfAccessors[gltf_skin.m_InverseBindMatrices].m_Type);
+    Buffer buffer = getBuffer(gltf_skin.m_InverseBindMatrices, gltfAccessors, gltfBufferViews, allocatedBuffers);
 
     for (int i = 0; i < numJoints; ++i) {
 
         int count = 0;
-        for (int j = 0; j < buffer.count; j++) {
-            for (int k = 0; k < size; k++) {
-                float f;
-                memcpy(&f, buffer.data + count * 4, 4);
-                animation.samplers[i].keyFrames[j][k] = f;
+        for (int j = 0; j < numJoints; j++) 
+        {
+            for (int k = 0; k < 4; k++) 
+            {
+                for (int l = 0; l < 4; l++) 
+                {
+                    float f;
+                    memcpy(&f, buffer.data + count * 4, 4);
+                    skin.inverseBindMatrices[j][k][l] = f;
 
-                count++;
+                    count++;
+                }
             }
         }
+    }
 
-
-
-        skin.inverseBindMatrices[i] = gltf_skin.m_InverseBindMatrices[i];
+    for (int i = 0; i < numJoints; ++i)
+    {
+        skin.finalBoneMatrices[i] = glm::mat4(1.0f);
     }
 
     return skin;
