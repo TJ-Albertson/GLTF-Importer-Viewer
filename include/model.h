@@ -87,7 +87,7 @@ void DrawModelNode(unsigned int shaderId, Node* nodes, Node node, glm::mat4 pare
 
     if (node.jointIndex >= 0) {
         glm::mat4 inverseBindMatrix = skin->inverseBindMatrices[node.jointIndex];
-        glm::mat4 boneTransform = getBoneTransform(node.nodeIndex, 0.01f, animation);
+        glm::mat4 boneTransform = animateBone(node.nodeIndex, 0.001f, animation);
 
         globalTransform = boneTransform * parentTransform * inverseBindMatrix;
 
@@ -107,4 +107,27 @@ void DrawModelNode(unsigned int shaderId, Node* nodes, Node node, glm::mat4 pare
         DrawModelNode(shaderId, nodes, nodes[node.childrenIndices[i]], globalTransform, animation, skin);
     }
 }
+
+
+void printNodeArray(const Node* nodes, int numNodes)
+{
+    for (int i = 0; i < numNodes; ++i) {
+        printf("Node %d:\n", i);
+        printf("  Mesh Index: %d\n", nodes[i].meshIndex);
+        printf("  Joint Index: %d\n", nodes[i].jointIndex);
+        printf("  Node Index: %d\n", nodes[i].nodeIndex);
+        printf("  Translation: (%f, %f, %f)\n", nodes[i].translation.x, nodes[i].translation.y, nodes[i].translation.z);
+        printf("  Rotation: (%f, %f, %f, %f)\n", nodes[i].rotation.x, nodes[i].rotation.y, nodes[i].rotation.z, nodes[i].rotation.w);
+        printf("  Scale: (%f, %f, %f)\n", nodes[i].scale.x, nodes[i].scale.y, nodes[i].scale.z);
+        printf("  Number of Children: %d\n", nodes[i].numChildren);
+
+        printf("  Children Indices:");
+        for (int j = 0; j < nodes[i].numChildren; ++j) {
+            printf(" %d", nodes[i].childrenIndices[j]);
+        }
+        printf("\n\n");
+    }
+}
+
+
 #endif

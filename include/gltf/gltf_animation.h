@@ -92,7 +92,7 @@ Path getPath(int path)
 }
 
 Animation globalAnimation;
-float m_CurrentTime;
+float m_CurrentTime = 0.0f;
 
 glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation);
 
@@ -109,6 +109,7 @@ glm::mat4 animateBone(int nodeIndex, float dt, Animation animation)
 
 glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation)
 {
+    //printf("currentTime: %f\n", currentTime);
     glm::mat4 boneTransform = glm::mat4(1.0f);
 
     int i;
@@ -116,7 +117,7 @@ glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation
     {
         Channel channel = animation.channels[i];
 
-        if (channel.nodeIndex = nodeIndex) 
+        if (channel.nodeIndex == nodeIndex) 
         {
             Sampler sampler = animation.samplers[channel.samplerIndex];
 
@@ -128,6 +129,8 @@ glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation
                 if (currentTime < sampler.timeStamps[j + 1])
                     keyframeIndex = j;
             }
+
+            printf("keyframeIndex: %d\n", keyframeIndex);
 
             switch (sampler.interpolation) {
             case STEP: {
@@ -141,11 +144,11 @@ glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation
             case LINEAR: {
                 glm::vec4 keyframe_curr = sampler.keyFrames[keyframeIndex];
                 glm::vec4 keyframe_next = sampler.keyFrames[(keyframeIndex + 1) % sampler.numKeyFrames];
-
+                
                 float timestamp_curr = sampler.timeStamps[keyframeIndex];
                 float timestamp_next = sampler.timeStamps[keyframeIndex];
                 float scaleFactor = getScaleFactor(timestamp_curr, timestamp_next, currentTime);
-
+                
                 Path path = getPath(channel.path);
 
                 interpolate_linear(&boneTransform, keyframe_curr, keyframe_next, scaleFactor, path);

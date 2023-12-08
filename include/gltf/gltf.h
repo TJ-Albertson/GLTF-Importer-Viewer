@@ -312,9 +312,13 @@ int gltf_parse(const char* jsonString, Model& model)
 
     model.nodes = create_nodes(gltfNodes, numNodes);
 
+    
+
     int numJoints = gltfSkins[0].m_NumJoints;
 
     mark_joint_nodes(model.nodes, gltfSkins[0].m_Joints, numJoints);
+
+    printNodeArray(model.nodes, numNodes);
 
     model.skin = load_skin(gltfSkins[0], gltfAccessors, gltfBufferViews, allocatedBuffers);
 

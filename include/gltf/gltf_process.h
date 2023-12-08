@@ -703,7 +703,7 @@ gltfNode gltf_process_node(cJSON* node)
         gltf_node.scale.z = cJSON_GetArrayItem(scale, 2)->valuedouble;
 
     } else {
-        gltf_node.scale = glm::vec3(0.0f);
+        gltf_node.scale = glm::vec3(1.0f);
     }
 
 

@@ -190,6 +190,7 @@ int main()
     gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/cube.gltf", gltf_model);
 
     printAnimation(&globalAnimation);
+    
    // return 1;
 
     selectedMaterial = gltf_model.materials[0];
@@ -273,7 +274,7 @@ int main()
         setShaderMat4(animShader, "model", anim_model);
 
         for (int i = 0; i < gltf_model.numRootNodes; ++i)
-            //DrawModelNode(animShader, gltf_model.nodes, gltf_model.nodes[gltf_model.rootNodeIndices[i]], anim_model, gltf_model.animations[0], &gltf_model.skin);
+            DrawModelNode(animShader, gltf_model.nodes, gltf_model.nodes[gltf_model.rootNodeIndices[i]], anim_model, gltf_model.animations[0], &gltf_model.skin);
         
         for (int i = 0; i < gltf_model.skin.numJoints; ++i)
             setShaderMat4(animShader, "finalBonesMatrices[" + std::to_string(i) + "]", gltf_model.skin.finalBoneMatrices[i]);
