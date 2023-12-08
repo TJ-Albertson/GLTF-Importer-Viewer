@@ -152,6 +152,22 @@ Path getPath(int path)
     }
 }
 
+Animation globalAnimation;
+float m_CurrentTime;
+
+glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation);
+
+glm::mat4 animateBone(int nodeIndex, float dt, Animation animation)
+{
+    int numKeyframes = animation.samplers[0].numKeyFrames;
+    float duration = animation.samplers[0].timeStamps[numKeyframes];
+
+    m_CurrentTime += dt;
+    m_CurrentTime = fmod(m_CurrentTime, duration);
+
+    return getBoneTransform(nodeIndex, m_CurrentTime, animation);
+}
+
 glm::mat4 getBoneTransform(int nodeIndex, float currentTime, Animation animation)
 {
     glm::mat4 boneTransform = glm::mat4(1.0f);
@@ -253,6 +269,8 @@ Buffer getBuffer(unsigned int accessorIndex, gltfAccessor* gltfAccessors, gltfBu
 
     return buffer;
 }
+
+
 
 Animation load_animation(gltfAnimation gltf_animation, gltfAccessor* gltfAccessors, gltfBufferView* gltfBufferViews, char** allocatedBuffers)
 {

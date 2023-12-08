@@ -189,7 +189,7 @@ int main()
    // gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
     gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/cube.gltf", gltf_model);
 
- 
+    printAnimation(&globalAnimation);
    // return 1;
 
     selectedMaterial = gltf_model.m_Materials[0];
@@ -198,6 +198,8 @@ int main()
 
     unsigned int pbrShader = createShader(filepath("/resources/shaders/pbr/pbr.vs"), filepath("/resources/shaders/pbr/pbr.fs"));
     //unsigned int pbrShader = createShader(filepath("/resources/shaders/basic/basic.vs"), filepath("/resources/shaders/basic/basic.fs"));
+
+    unsigned int animShader = createShader(filepath("/resources/shaders/animation/animation.vs"), filepath("/resources/shaders/animation/animation.fs"));
 
    // unsigned int grid_VAO = LoadGrid();
     LoadSkybox(filepath, "skybox7");
@@ -262,6 +264,13 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(playerCamera->FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, RENDER_DISTANCE);
         glm::mat4 view = GetViewMatrix(*playerCamera);
 
+        glUseProgram(animShader);
+        setShaderMat4(animShader, "projection", projection);
+        setShaderMat4(animShader, "view", view);
+
+
+
+
         glUseProgram(pbrShader);
         setShaderMat4(pbrShader, "projection", projection);
         setShaderMat4(pbrShader, "view", view);
@@ -274,7 +283,7 @@ int main()
                 model = glm::translate(model, glm::vec3((float)(col - (nrColumns / 2)) * spacing, (float)(row - (nrRows / 2)) * spacing, 0.0f));
                 setShaderMat4(pbrShader, "model", model);
                 setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-                gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
+                //gltf_draw_mesh(gltf_model.m_Meshes[0].m_VAO, gltf_model.m_Materials[0], gltf_model.m_Meshes[0].m_NumIndices, pbrShader);
             }
         }
 
@@ -291,7 +300,7 @@ int main()
             setShaderMat4(pbrShader, "model", model);
             setShaderMat3(pbrShader, "normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
             glBindVertexArray(gltf_model.m_Meshes[0].m_VAO);
-            glDrawElements(GL_TRIANGLE_STRIP, gltf_model.m_Meshes[0].m_NumIndices, GL_UNSIGNED_INT, 0);
+            //glDrawElements(GL_TRIANGLE_STRIP, gltf_model.m_Meshes[0].m_NumIndices, GL_UNSIGNED_INT, 0);
         }
 
         DrawSkybox(*playerCamera, view, projection, currentTime);

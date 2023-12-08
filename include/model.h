@@ -54,7 +54,6 @@ glm::mat4* FinalBoneMatrices;
 glm::mat4* inverseBindMatrices;
 
 
-
 void create_nodes(gltfNode* gltf_nodes, int numNodes)
 {
     Node* nodes = (Node*)malloc(numNodes * sizeof(Node));
@@ -106,13 +105,13 @@ glm::mat4 getNodeTransform(Node node)
     return localTransform;
 }
 
-void DrawModelNode(Node* nodes, Node node, glm::mat4 parentTransform, unsigned int shaderId)
+void DrawModelNode(Node* nodes, Node node, glm::mat4 parentTransform, unsigned int shaderId, Animation animation)
 {
     glm::mat4 globalTransform;
 
     if (node.jointIndex >= 0) {
         glm::mat4 inverseBindMatrix = inverseBindMatrices[node.jointIndex];
-        glm::mat4 boneTransform = getBoneTransform(node.nodeIndex);
+        glm::mat4 boneTransform = getBoneTransform(node.nodeIndex, 0.01f, animation);
 
         globalTransform = boneTransform * parentTransform * inverseBindMatrix;
 
@@ -129,7 +128,7 @@ void DrawModelNode(Node* nodes, Node node, glm::mat4 parentTransform, unsigned i
     
     int i;
     for (i = 0; i < node.numChildren; ++i) {
-        DrawModelNode(nodes, nodes[node.childrenIndices[i]], globalTransform, shaderId);
+        DrawModelNode(nodes, nodes[node.childrenIndices[i]], globalTransform, shaderId, animation);
     }
 }
 #endif
