@@ -186,7 +186,7 @@ int main()
     // LoadGLTF("C:/Users/tjalb/OneDrive/Documents/assets/gltf/cube3.gltf");
 
     Model gltf_model;
-   // gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
+    //gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/sphere/sphere.gltf", gltf_model);
     gltf_load_model("C:/Users/tjalb/OneDrive/Documents/assets/gltf/animation/cube.gltf", gltf_model);
 
     printAnimation(&globalAnimation);
@@ -265,7 +265,7 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(playerCamera->FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, RENDER_DISTANCE);
         glm::mat4 view = GetViewMatrix(*playerCamera);
 
-        /* animation */
+        /* animation begin*/
         glUseProgram(animShader);
         setShaderMat4(animShader, "projection", projection);
         setShaderMat4(animShader, "view", view);
@@ -280,7 +280,7 @@ int main()
             setShaderMat4(animShader, "finalBonesMatrices[" + std::to_string(i) + "]", gltf_model.skin.finalBoneMatrices[i]);
 
         gltf_draw_mesh(animShader, gltf_model.meshes[0], gltf_model.materials);
-        /* animation */
+        /* animation end*/
 
         
 

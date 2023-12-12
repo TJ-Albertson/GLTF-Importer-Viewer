@@ -81,13 +81,15 @@ glm::mat4 getNodeTransform(Node node)
     return localTransform;
 }
 
+
+/* this is the one I was gonna turn into a stack iterative */
 void DrawModelNode(unsigned int shaderId, Node* nodes, Node node, glm::mat4 parentTransform, Animation animation, Skin* skin)
 {
     glm::mat4 globalTransform;
 
     if (node.jointIndex >= 0) {
         glm::mat4 inverseBindMatrix = skin->inverseBindMatrices[node.jointIndex];
-        glm::mat4 boneTransform = animateBone(node.nodeIndex, 0.001f, animation);
+        glm::mat4 boneTransform = animateBone(node.nodeIndex, 0.01f, animation);
 
         globalTransform = boneTransform * parentTransform * inverseBindMatrix;
 
